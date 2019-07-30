@@ -14,18 +14,18 @@
     "minimum-stability": "beta",
     "autoload": {
         "psr-4": {
-            "IFantace\\Common\\": "src/"
+            "Ifantace\\Common\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "IFantace\\Common\\Tests\\": "tests/"
+            "Ifantace\\Common\\Tests\\": "tests/"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "IFantace\\Common\\CommonServiceProvider"
+                "Ifantace\\Common\\CommonServiceProvider"
             ]
         }
     }
