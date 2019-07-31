@@ -15,9 +15,9 @@ class CommonServiceProvider extends ServiceProvider
     {
         // Schema::defaultStringLength(191);
 
-        $this->loadRoutesFrom(__DIR__ . '/routes/web.php' .
-            '');
+        $this->loadRoutesFrom(__DIR__ . '/routes/web.php');
         $this->loadViewsFrom(__DIR__ . '/resources/views', 'Common');
+        $this->loadTranslationsFrom(__DIR__ . '/resources/lang', 'Common');
     }
 
     /**
