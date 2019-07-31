@@ -13,7 +13,8 @@ class CommonController extends Controller
      */
     public function index()
     {
-        // $message = config("helloworld.message");
-        // return view('HelloWorld::welcome', compact('message'));
+        $message = config("common.message");
+        //Common $this->loadViewsFrom(__DIR__ . '/resources/views', 'Common');
+        return view('Common::welcome', compact('message'));
     }
 }

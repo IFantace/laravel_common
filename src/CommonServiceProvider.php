@@ -17,7 +17,7 @@ class CommonServiceProvider extends ServiceProvider
 
         $this->loadRoutesFrom(__DIR__ . '/routes/web.php' .
             '');
-        $this->loadViewsFrom(__DIR__ . '/resources/views', 'HelloWorld');
+        $this->loadViewsFrom(__DIR__ . '/resources/views', 'Common');
     }
 
     /**
@@ -38,7 +38,7 @@ class CommonServiceProvider extends ServiceProvider
                 "$basePath/publishable/databases/migrations" => database_path('migrations'),
             ],
             'config' => [
-                "$basePath/publishable/config/common.php" => config_path('common.php'),
+                "$basePath/publishable/config" => config_path(),
             ],
         ];
 

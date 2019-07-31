@@ -5,7 +5,6 @@ namespace Ifantace\Common;
 use Illuminate\Http\Request;
 use Auth;
 use Log;
-// use Symfony\Component\Debug\Exception\FatalThrowableError;
 
 trait CommonTraits
 {
