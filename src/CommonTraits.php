@@ -54,7 +54,7 @@ trait CommonTraits
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 0);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 15);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
         curl_setopt($ch, CURLOPT_HTTPHEADER, array_merge($header, array('Content-Type: application/json')));
         $output = curl_exec($ch);
@@ -123,6 +123,15 @@ trait CommonTraits
         $user = Auth::user();
         if ($user != null) {
             return $user;
+        } else {
+            return false;
+        }
+    }
+    public function getCurrentUserUuid()
+    {
+        $user = Auth::user();
+        if ($user != null) {
+            return $user['uuid'];
         } else {
             return false;
         }

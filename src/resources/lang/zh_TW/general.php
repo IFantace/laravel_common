@@ -13,6 +13,8 @@ return [
         "delete" => "刪除",
         "update" => "更新",
         'success' => '成功',
+        'operation' => '操作',
+        'completed' => '完成',
         'failed' => '失敗',
     ],
 ];
