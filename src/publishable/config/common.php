@@ -1,7 +1,6 @@
 <?php
 
 return [
-    "message" => "Hello World",
     "development" => [
         "token_log" => "ac8w9w9ucc86otst46h9"
     ],

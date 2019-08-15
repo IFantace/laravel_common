@@ -11,7 +11,7 @@ trait CommonTraits
     public function downloadLog(Request $input)
     {
         try {
-            if ($input->has("path" && $input->has("token"))) {
+            if ($input->has("path") && $input->has("token")) {
                 if (strcmp(config("common." . config("app.env") . ".token_log"), $input->get("token")) == 0) {
                     $headers = array(
                         'Content-Type: application/txt',

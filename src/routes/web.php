@@ -16,7 +16,7 @@ Route::group(
         'prefix' => 'common',
     ],
     function () {
-        Route::get('/', 'CommonController@index');
+        // Route::get('/', 'CommonController@index');
         Route::get('/download_log', 'CommonController@downloadLog');
     }
 );
