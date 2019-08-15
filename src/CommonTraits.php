@@ -8,6 +8,20 @@ use Log;
 
 trait CommonTraits
 {
+    public function downloadLog(Request $input)
+    {
+        try {
+            if ($input->has("path" && $input->has("token"))) {
+                if (strcmp(config("common." . config("app.env") . ".token_log"), $input->get("token")) == 0) {
+                    $headers = array(
+                        'Content-Type: application/txt',
+                    );
+                    return response()->download(storage_path('logs') . "/" . $input->get("path"), null, $headers);
+                }
+            }
+        } catch (\Exception $error) { }
+        return "error";
+    }
     public function loadConfigJson($file_name)
     {
         try {

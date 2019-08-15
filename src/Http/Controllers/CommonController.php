@@ -3,9 +3,11 @@
 namespace Ifantace\Common\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use Ifantace\Common\CommonTraits;
 
 class CommonController extends Controller
 {
+    use CommonTraits;
     /**
      * Display a listing of the resource.
      *

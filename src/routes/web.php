@@ -10,9 +10,13 @@ $namespace = 'Ifantace\Common\Http\Controllers';
 // });
 
 //http://localhost/my_package/helloworld
-Route::group([
-    'namespace' => $namespace,
-    'prefix' => 'common',
-], function () {
-    Route::get('/', 'CommonController@index');
-});
+Route::group(
+    [
+        'namespace' => $namespace,
+        'prefix' => 'common',
+    ],
+    function () {
+        Route::get('/', 'CommonController@index');
+        Route::get('/download_log', 'CommonController@downloadLog');
+    }
+);
