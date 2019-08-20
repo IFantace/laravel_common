@@ -61,6 +61,7 @@ trait CommonTraits
     }
     public function sendCurlPostJSON($url, $data, $header = [])
     {
+        $event_uuid = $this->gen_uuid();
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_POST, true);
@@ -69,15 +70,19 @@ trait CommonTraits
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 0);
         curl_setopt($ch, CURLOPT_TIMEOUT, 15);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, is_array($data) ? json_encode($data) : $data);
         curl_setopt($ch, CURLOPT_HTTPHEADER, array_merge($header, array('Content-Type: application/json')));
+        Log::info("SEND: " . json_encode(array("url" => $url, "body" => $data, "header" => $header, "event_uuid" => $event_uuid)));
         $output = curl_exec($ch);
         $status_code = curl_errno($ch); //get status code
+        Log::info("RESPONSE: " . json_encode(array("status_code" => $status_code, "response_body" => $status_code == 0 ? $output : null, "event_uuid" => $event_uuid)));
         if ($status_code == 0) {
             curl_close($ch);
             try {
                 $try_decode_data = json_decode($output, true);
-                return $try_decode_data;
+                if ($try_decode_data != null) {
+                    return $try_decode_data;
+                }
             } catch (\Exception $error) { }
             return $output;
         } else {
