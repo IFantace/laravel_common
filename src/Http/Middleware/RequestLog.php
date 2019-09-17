@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Http\Middleware;
+namespace Ifantace\Common\Http\Middleware;
 
 use Closure;
-
 use Log;
 use Auth;
 
