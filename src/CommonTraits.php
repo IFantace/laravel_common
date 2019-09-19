@@ -155,27 +155,46 @@ trait CommonTraits
             return false;
         }
     }
-    public function returnResult($line, $API_name, $method, $input, $return_data, $file_name, $error = null)
+    public function returnResult($method, $input, $return_data, $error = null)
     {
-        try {
-            if (is_array($input)) {
-                $parameter = $input;
-            } else {
-                $parameter = $input->all();
-            }
-            $user = $this->getCurrentUser();
-        } catch (Exception $error) { }
-        $str_input = "REQUEST: " . json_encode(array("method" => $method,  "File" => $file_name, "Page" => $API_name, "Parameter" => $parameter, "user" => $user));
-        $str_return = "RETURN: " . json_encode(array("File" => $file_name, "Page" => $API_name, "Result" => $return_data, "Line" => $line, "user" => $user)) . "\r\n";
-        $monolog = Log::getMonolog();
-        $monolog->popHandler();
-        Log::useDailyFiles(storage_path() . "/logs/" . $file_name . "/" . $file_name . ".log");
+        $back_trace = debug_backtrace();
+        $caller = array_shift($back_trace);
+        $caller_source = array_shift($back_trace);
+
+        $parameter = is_array($input) ? $input : $input->all();
+        $user = $this->getCurrentUser();
+        $line = isset($caller["line"]) ? $caller["line"] : null;
+        $class = isset($caller["class"]) ? $caller["class"] : null;
+        $function_name = isset($caller_source["function"]) ? $caller_source["function"] : null;
+        $str_input = "REQUEST: " . json_encode(array(
+            "method" => $method,
+            "File" => $class,
+            "Page" => $function_name,
+            "Parameter" => $parameter,
+            "user" => $user->uuid
+        ));
+        $str_return = "RETURN: " . json_encode(array(
+            "File" => $class,
+            "Page" => $function_name,
+            "Result" => $return_data,
+            "Line" => $line,
+            "user" => $user->uuid
+        ));
+
+        Log::getMonolog()->popHandler();
+        Log::useDailyFiles(storage_path("logs/laravel.log"));
         Log::info($str_input);
-        Log::info($str_return);
         if ($error != null) {
-            $str_error = "EXCEPTION: " . json_encode(array("File" => $file_name, "Page" => $API_name, 'line' => $error->getLine(), "Exception" => $error->getMessage(), "user" => $user)) . "\r\n";
+            $str_error = "EXCEPTION: " . json_encode(array(
+                "File" => $class,
+                "Page" => $function_name,
+                'line' => $error->getLine(),
+                "Exception" => $error->getMessage(),
+                "user" => $user
+            ));
             Log::error($str_error);
         }
+        Log::info($str_return);
         return $return_data;
     }
 }
