@@ -49,8 +49,12 @@ class CommonRepository
     {
         return $this->query->firstOrCreate($first_data, $create_data);
     }
-    public function searchAllColumn(array $parameter, array  $columns_not_search = array(), array  $columns_change_search = array())
-    {
+    public function searchAllColumn(
+        array $parameter,
+        array $columns_not_search = array(),
+        array $columns_change_search = array(),
+        array $special_column = array()
+    ) {
         if (isset($parameter['query'])) {
             $query_string = $parameter['query'];
             $columns = Schema::connection($this->database_name)->getColumnListing($this->table_name);
@@ -59,9 +63,12 @@ class CommonRepository
             if (preg_match('/[^A-Za-z0-9: ]/', $query_string)) {
                 $columns = array_values(array_diff($columns, ["created_at", "updated_at", "deleted_at"]));
             }
-            $this->query->where(function ($query_all_column) use ($columns, $query_string, $columns_change_search) {
-                foreach ($columns as $column) {
-                    $query_all_column->orWhere($column, 'like', '%' . $query_string . '%');
+            $this->query->where(function ($query_all_column) use ($columns, $query_string, $columns_change_search, $special_column) {
+                foreach ($columns as $each_column) {
+                    $query_all_column->orWhere($each_column, 'like', '%' . $query_string . '%');
+                }
+                foreach ($special_column as $column_name => $value_array) {
+                    $query_all_column->orWhereIn($column_name, $value_array);
                 }
                 foreach ($columns_change_search as $search_column_name => $change_key_array) {
                     foreach ($change_key_array as $inside_value => $outter_value) {
