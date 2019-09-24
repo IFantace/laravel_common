@@ -22,12 +22,10 @@ trait CommonTraits
         } catch (\Exception $error) { }
         return "error";
     }
-    public function loadConfigJson($file_name)
+    public function loadConfigJson(Request $input)
     {
         try {
-            if (!is_string($file_name)) {
-                $file_name = $file_name->get("file_name");
-            }
+            $file_name = $input->get("file_name");
             return json_decode(file_get_contents(config_path('JSON/' . $file_name . '.json')), true);
         } catch (\Exception $error) {
             return [];
