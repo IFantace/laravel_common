@@ -25,6 +25,10 @@ class CommonRepository
     {
         return $this->query->get();
     }
+    public function pluck()
+    {
+        return $this->query->pluck();
+    }
     public function delete()
     {
         return $this->query->delete();
