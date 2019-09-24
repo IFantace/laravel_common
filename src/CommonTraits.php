@@ -72,7 +72,7 @@ trait CommonTraits
         curl_setopt($ch, CURLOPT_TIMEOUT, 60);
         curl_setopt($ch, CURLOPT_POSTFIELDS, is_array($data) ? json_encode($data) : $data);
         curl_setopt($ch, CURLOPT_HTTPHEADER, array_merge($header, array('Content-Type: application/json')));
-        Log::info("SEND: " . json_encode(array("url" => curl_getinfo($ch, CURLOPT_URL), "body" => curl_getinfo($ch, CURLOPT_POSTFIELDS), "header" => curl_getinfo($ch, CURLOPT_HTTPHEADER), "event_uuid" => $event_uuid)));
+        Log::info("SEND: " . json_encode(array("url" => $url, "body" => $data, "header" => array_merge($header, array('Content-Type: application/json')), "event_uuid" => $event_uuid)));
         $output = curl_exec($ch);
         $status_code = curl_errno($ch); //get status code
         Log::info("RESPONSE: " . json_encode(array("status_code" => $status_code, "response_body" => $status_code == 0 ? $output : null, "event_uuid" => $event_uuid)));
@@ -169,7 +169,7 @@ trait CommonTraits
         $str_return = "RETURN: " . json_encode(array("File" => $file_name, "Page" => $API_name, "Result" => $return_data, "Line" => $line, "user" => $user)) . "\r\n";
         $monolog = Log::getMonolog();
         $monolog->popHandler();
-        Log::useDailyFiles(storage_path() . "/logs/" . $file_name . "/" . $file_name . ".log");
+        Log::useDailyFiles(storage_path() . "/logs/laravel.log");
         Log::info($str_input);
         Log::info($str_return);
         if ($error != null) {
