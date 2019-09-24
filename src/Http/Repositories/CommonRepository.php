@@ -25,9 +25,9 @@ class CommonRepository
     {
         return $this->query->get();
     }
-    public function pluck()
+    public function pluck($column)
     {
-        return $this->query->pluck();
+        return $this->query->pluck($column);
     }
     public function delete()
     {
