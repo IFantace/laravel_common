@@ -72,6 +72,9 @@ trait CommonTraits
         curl_setopt($ch, CURLOPT_TIMEOUT, 60);
         curl_setopt($ch, CURLOPT_POSTFIELDS, is_array($data) ? json_encode($data) : $data);
         curl_setopt($ch, CURLOPT_HTTPHEADER, array_merge($header, array('Content-Type: application/json')));
+        $monolog = Log::getMonolog();
+        $monolog->popHandler();
+        Log::useDailyFiles(storage_path() . "/logs/curl.log");
         Log::info("SEND: " . json_encode(array("url" => $url, "body" => $data, "header" => array_merge($header, array('Content-Type: application/json')), "event_uuid" => $event_uuid)));
         $output = curl_exec($ch);
         $status_code = curl_errno($ch); //get status code
