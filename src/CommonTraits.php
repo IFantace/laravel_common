@@ -169,16 +169,15 @@ trait CommonTraits
             "File" => $class,
             "Page" => $function_name,
             "Parameter" => $parameter,
-            "user" => $user->uuid
+            "user" => $user ? $user->uuid : null
         ));
         $str_return = "RETURN: " . json_encode(array(
             "File" => $class,
             "Page" => $function_name,
             "Result" => $return_data,
             "Line" => $line,
-            "user" => $user->uuid
+            "user" => $user ? $user->uuid : null
         ));
-
         Log::getMonolog()->popHandler();
         Log::useDailyFiles(storage_path("logs/laravel.log"));
         Log::info($str_input);
