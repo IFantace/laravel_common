@@ -165,18 +165,18 @@ trait CommonTraits
         $class = isset($caller["class"]) ? $caller["class"] : null;
         $function_name = isset($caller_source["function"]) ? $caller_source["function"] : null;
         $str_input = "REQUEST: " . json_encode(array(
-            "method" => $method,
+            "Method" => $method,
             "File" => $class,
             "Page" => $function_name,
             "Parameter" => $parameter,
-            "user" => $user ? $user->uuid : null
+            "User" => $user ? $user->uuid : null
         ));
         $str_return = "RETURN: " . json_encode(array(
             "File" => $class,
             "Page" => $function_name,
             "Result" => $return_data,
             "Line" => $line,
-            "user" => $user ? $user->uuid : null
+            "User" => $user ? $user->uuid : null
         ));
         Log::getMonolog()->popHandler();
         Log::useDailyFiles(storage_path("logs/laravel.log"));
