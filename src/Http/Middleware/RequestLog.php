@@ -27,7 +27,10 @@ class RequestLog
             }
             $log_data = array("ip" => $request->ip(), "method" => $request->method(), "url" => $route->uri, "user_uuid" => $user, "parameters" => $request->all);
             Log::useDailyFiles(storage_path() . "/logs/Request/request.log");
-            Log::info(json_encode($log_data));
+            Log::info(json_encode(
+                $log_data,
+                JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE
+            ));
         } catch (\Exception $error) {
             Log::useDailyFiles(storage_path() . "/logs/Request/request_error.log");
             Log::error($error->getMessage());

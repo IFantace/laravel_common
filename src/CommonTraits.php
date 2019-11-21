@@ -70,15 +70,25 @@ trait CommonTraits
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 0);
         curl_setopt($ch, CURLOPT_TIMEOUT, 60);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, is_array($data) ? json_encode($data) : $data);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, is_array($data)
+            ? json_encode(
+                $data,
+                JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE
+            ) : $data);
         curl_setopt($ch, CURLOPT_HTTPHEADER, array_merge($header, array('Content-Type: application/json')));
         $monolog = Log::getMonolog();
         $monolog->popHandler();
         Log::useDailyFiles(storage_path() . "/logs/curl.log");
-        Log::info("SEND: " . json_encode(array("url" => $url, "body" => $data, "header" => array_merge($header, array('Content-Type: application/json')), "event_uuid" => $event_uuid)));
+        Log::info("SEND: " . json_encode(
+            array("url" => $url, "body" => $data, "header" => array_merge($header, array('Content-Type: application/json')), "event_uuid" => $event_uuid),
+            JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE
+        ));
         $output = curl_exec($ch);
         $status_code = curl_errno($ch); //get status code
-        Log::info("RESPONSE: " . json_encode(array("status_code" => $status_code, "response_body" => $status_code == 0 ? $output : null, "event_uuid" => $event_uuid)));
+        Log::info("RESPONSE: " . json_encode(
+            array("status_code" => $status_code, "response_body" => $status_code == 0 ? $output : null, "event_uuid" => $event_uuid),
+            JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE
+        ));
         if ($status_code == 0) {
             curl_close($ch);
             try {
@@ -168,15 +178,24 @@ trait CommonTraits
             }
             $user = $this->getCurrentUser();
         } catch (Exception $error) { }
-        $str_input = "REQUEST: " . json_encode(array("method" => $method,  "File" => $file_name, "Page" => $API_name, "Parameter" => $parameter, "user" => $user));
-        $str_return = "RETURN: " . json_encode(array("File" => $file_name, "Page" => $API_name, "Result" => $return_data, "Line" => $line, "user" => $user)) . "\r\n";
+        $str_input = "REQUEST: " . json_encode(
+            array("method" => $method,  "File" => $file_name, "Page" => $API_name, "Parameter" => $parameter, "user" => $user),
+            JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE
+        );
+        $str_return = "RETURN: " . json_encode(
+            array("File" => $file_name, "Page" => $API_name, "Result" => $return_data, "Line" => $line, "user" => $user),
+            JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE
+        ) . "\r\n";
         $monolog = Log::getMonolog();
         $monolog->popHandler();
         Log::useDailyFiles(storage_path() . "/logs/laravel.log");
         Log::info($str_input);
         Log::info($str_return);
         if ($error != null) {
-            $str_error = "EXCEPTION: " . json_encode(array("File" => $file_name, "Page" => $API_name, 'line' => $error->getLine(), "Exception" => $error->getMessage(), "user" => $user)) . "\r\n";
+            $str_error = "EXCEPTION: " . json_encode(
+                array("File" => $file_name, "Page" => $API_name, 'line' => $error->getLine(), "Exception" => $error->getMessage(), "user" => $user),
+                JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE
+            ) . "\r\n";
             Log::error($str_error);
         }
         return $return_data;
