@@ -89,6 +89,8 @@ trait CommonTraits
             array("status_code" => $status_code, "response_body" => $status_code == 0 ? $output : null, "event_uuid" => $event_uuid),
             JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE
         ));
+        Log::getMonolog()->popHandler();
+        Log::useDailyFiles(storage_path() . "/logs/laravel.log");
         if ($status_code == 0) {
             curl_close($ch);
             try {

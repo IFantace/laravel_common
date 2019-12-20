@@ -1,4 +1,10 @@
 <?php
+/*
+ * @Author: Austin
+ * @Date: 2019-08-01 17:26:23
+ * @LastEditors  : Austin
+ * @LastEditTime : 2019-12-20 12:17:58
+ */
 
 namespace Ifantace\Common\Http\Middleware;
 
@@ -35,6 +41,8 @@ class RequestLog
             Log::useDailyFiles(storage_path() . "/logs/Request/request_error.log");
             Log::error($error->getMessage());
         }
+        Log::getMonolog()->popHandler();
+        Log::useDailyFiles(storage_path() . "/logs/laravel.log");
         return $next($request);
     }
 }
