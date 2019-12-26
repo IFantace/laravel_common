@@ -57,9 +57,11 @@ trait CommonTraits
         }
         return $randoma;
     }
-    public function sendCurlPostJSON($url, $data, $header = [])
+    public function sendCurlPostJSON($url, $data, $header = [], $event_uuid = null)
     {
-        $event_uuid = $this->gen_uuid();
+        if ($event_uuid === null) {
+            $event_uuid = $this->gen_uuid();
+        }
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_POST, true);
@@ -68,14 +70,16 @@ trait CommonTraits
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 0);
         curl_setopt($ch, CURLOPT_TIMEOUT, 60);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, is_array($data) ? json_encode($data) : $data);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, is_array($data) ? json_encode($data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) : $data);
         curl_setopt($ch, CURLOPT_HTTPHEADER, array_merge($header, array('Content-Type: application/json')));
         Log::getMonolog()->popHandler();
         Log::useDailyFiles(storage_path() . "/logs/curl.log");
-        Log::info("SEND: " . json_encode(array("url" => $url, "body" => $data, "header" => array_merge($header, array('Content-Type: application/json')), "event_uuid" => $event_uuid)));
+        Log::info("SEND: " . json_encode(array("url" => $url, "body" => $data, "header" => array_merge($header, array('Content-Type: application/json')), "event_uuid" => $event_uuid),  JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
         $output = curl_exec($ch);
         $status_code = curl_errno($ch); //get status code
-        Log::info("RESPONSE: " . json_encode(array("status_code" => $status_code, "response_body" => $status_code == 0 ? $output : null, "event_uuid" => $event_uuid)));
+        Log::info("RESPONSE: " . json_encode(array("status_code" => $status_code, "response_body" => $status_code == 0 ? $output : null, "event_uuid" => $event_uuid), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
+        Log::getMonolog()->popHandler();
+        Log::useDailyFiles(storage_path() . "/logs/laravel.log");
         if ($status_code == 0) {
             curl_close($ch);
             try {
@@ -172,14 +176,14 @@ trait CommonTraits
             "Page" => $function_name,
             "Parameter" => $parameter,
             "User" => $user ? $user->uuid : null
-        ));
+        ), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
         $str_return = "RETURN: " . json_encode(array(
             "File" => $class,
             "Page" => $function_name,
             "Result" => $return_data,
             "Line" => $line,
             "User" => $user ? $user->uuid : null
-        ));
+        ), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
         Log::getMonolog()->popHandler();
         Log::useDailyFiles(storage_path("logs/laravel.log"));
         Log::info($str_input);
@@ -190,7 +194,7 @@ trait CommonTraits
                 'line' => $error->getLine(),
                 "Exception" => $error->getMessage(),
                 "user" => $user
-            ));
+            ), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
             Log::error($str_error);
         }
         Log::info($str_return);

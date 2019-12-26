@@ -71,8 +71,8 @@ class CommonRepository
                     $query_all_column->orWhereIn($column_name, $value_array);
                 }
                 foreach ($columns_change_search as $search_column_name => $change_key_array) {
-                    foreach ($change_key_array as $inside_value => $outter_value) {
-                        if (strpos($outter_value, $query_string) !== false) {
+                    foreach ($change_key_array as $inside_value => $outer_value) {
+                        if (strpos($outer_value, $query_string) !== false) {
                             $query_all_column->orWhere($search_column_name, 'like', '%' . $inside_value . '%');
                         }
                     }
