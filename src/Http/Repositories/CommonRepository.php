@@ -6,48 +6,43 @@ use Schema;
 
 class CommonRepository
 {
-    protected $query;
-    protected $database_name;
-    protected $table_name;
-
-    public function __construct($query, $database_name, $table_name)
+    protected $model;
+    public function __construct($model)
     {
-        $this->query = $query;
-        $this->database_name = $database_name;
-        $this->table_name = $table_name;
+        $this->model = $model;
     }
 
     public function first()
     {
-        return $this->query->first();
+        return $this->model->first();
     }
     public function get()
     {
-        return $this->query->get();
+        return $this->model->get();
     }
     public function pluck($column)
     {
-        return $this->query->pluck($column);
+        return $this->model->pluck($column);
     }
     public function delete()
     {
-        return $this->query->delete();
+        return $this->model->delete();
     }
     public function count()
     {
-        return $this->query->count();
+        return $this->model->count();
     }
     public function update(array $update_data)
     {
-        return $this->query->update($update_data);
+        return $this->model->update($update_data);
     }
     public function create(array $create_data)
     {
-        return $this->query->create($create_data);
+        return $this->model->create($create_data);
     }
     public function firstOrCreate(array $first_data, array $create_data)
     {
-        return $this->query->firstOrCreate($first_data, $create_data);
+        return $this->model->firstOrCreate($first_data, $create_data);
     }
     public function searchAllColumn(
         array $parameter,
@@ -57,13 +52,13 @@ class CommonRepository
     ) {
         if (isset($parameter['query'])) {
             $query_string = $parameter['query'];
-            $columns = Schema::connection($this->database_name)->getColumnListing($this->table_name);
+            $columns = Schema::connection($this->model->getConnectionName())->getColumnListing($this->model->getTable());
             $columns_not_search = array_merge($columns_not_search, array_keys($columns_change_search));
             $columns = array_values(array_diff($columns, $columns_not_search));
             if (preg_match('/[^A-Za-z0-9: ]/', $query_string)) {
                 $columns = array_values(array_diff($columns, ["created_at", "updated_at", "deleted_at"]));
             }
-            $this->query->where(function ($query_all_column) use ($columns, $query_string, $columns_change_search, $special_column) {
+            $this->model = $this->model->where(function ($query_all_column) use ($columns, $query_string, $columns_change_search, $special_column) {
                 foreach ($columns as $each_column) {
                     $query_all_column->orWhere($each_column, 'like', '%' . $query_string . '%');
                 }
@@ -83,33 +78,33 @@ class CommonRepository
     }
     public function getTable(array $parameter)
     {
-        $count = $this->query->count();
+        $count = $this->model->count();
         if (isset($parameter['orderBy']) && isset($parameter['ascending'])) {
             $orderBy = $parameter['orderBy'];
             $ascending = $parameter['ascending'];
-            $this->query->orderBy($orderBy, $ascending == 1 ? "ASC" : "DESC");
+            $this->model = $this->model->orderBy($orderBy, $ascending == 1 ? "ASC" : "DESC");
         } else {
-            $this->query->orderBy('created_at', "DESC");
+            $this->model = $this->model->orderBy('created_at', "DESC");
         }
         if (isset($parameter['page']) && isset($parameter['limit'])) {
             $page = $parameter['page'];
             $limit = $parameter['limit'];
-            $this->query->skip(($page - 1) * $limit);
+            $this->model = $this->model->skip(($page - 1) * $limit);
         }
         if (isset($parameter['limit'])) {
             $limit = $parameter['limit'];
-            $this->query->take($limit);
+            $this->model = $this->model->take($limit);
         }
         if (isset($parameter['select'])) {
-            $this->query->select($parameter['select']);
+            $this->model = $this->model->select($parameter['select']);
         }
         if (isset($parameter["with"])) {
-            $this->query->with($parameter['with']);
+            $this->model =  $this->model->with($parameter['with']);
         }
         if (isset($parameter["with_count"])) {
-            $this->query->withCount($parameter['with_count']);
+            $this->model = $this->model->withCount($parameter['with_count']);
         }
-        $data = $this->query->get();
+        $data = $this->model->get();
         return ['count' => $count, 'data' => $data];
     }
 }
