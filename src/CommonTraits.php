@@ -2,9 +2,10 @@
 
 namespace Ifantace\Common;
 
+use DateTime;
 use Illuminate\Http\Request;
-use Auth;
-use Log;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 trait CommonTraits
 {
@@ -19,7 +20,8 @@ trait CommonTraits
                     return response()->download(storage_path('logs') . "/" . $input->get("path"), null, $headers);
                 }
             }
-        } catch (\Exception $error) { }
+        } catch (\Exception $error) {
+        }
         return "error";
     }
     public function loadConfigJson(Request $input)
@@ -29,7 +31,8 @@ trait CommonTraits
             return json_decode(file_get_contents(config_path('JSON/' . $file_name . '.json')), true);
         } catch (\Exception $error) {
             return [];
-        } finally { }
+        } finally {
+        }
     }
     public function checkPostParameter(Request $input, $column_array)
     {
@@ -87,7 +90,8 @@ trait CommonTraits
                 if ($try_decode_data != null) {
                     return $try_decode_data;
                 }
-            } catch (\Exception $error) { }
+            } catch (\Exception $error) {
+            }
             return $output;
         } else {
             $error = curl_error($ch);

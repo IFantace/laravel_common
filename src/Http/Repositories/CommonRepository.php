@@ -2,7 +2,7 @@
 
 namespace Ifantace\Common\Http\Repositories;
 
-use Schema;
+use Illuminate\Support\Facades\Schema;
 
 class CommonRepository
 {
@@ -11,7 +11,6 @@ class CommonRepository
     {
         $this->model = $model;
     }
-
     public function first()
     {
         return $this->model->first();

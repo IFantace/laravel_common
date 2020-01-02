@@ -3,7 +3,7 @@
 namespace Ifantace\Common\Http\Middleware;
 
 use Closure;
-use App;
+use Illuminate\Support\Facades\App;
 
 class SetLanguage
 {

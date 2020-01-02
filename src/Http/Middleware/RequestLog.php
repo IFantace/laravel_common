@@ -2,15 +2,15 @@
 /*
  * @Author: Austin
  * @Date: 2019-08-01 17:26:23
- * @LastEditors: Austin
- * @LastEditTime: 2019-12-26 17:08:25
+ * @LastEditors  : Austin
+ * @LastEditTime : 2020-01-02 21:10:18
  */
 
 namespace Ifantace\Common\Http\Middleware;
 
 use Closure;
-use Log;
-use Auth;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 
 class RequestLog
 {
