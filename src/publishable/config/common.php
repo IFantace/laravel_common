@@ -1,4 +1,10 @@
 <?php
+/*
+ * @Author: Austin
+ * @Date: 2020-01-09 18:18:25
+ * @LastEditors: Austin
+ * @LastEditTime: 2020-01-09 20:45:53
+ */
 
 return [
     "development" => [
@@ -11,6 +17,6 @@ return [
         "token_log" => "ac8w9w9ucc86otst46h9"
     ],
     "production" => [
-        "token_log" => "ac8w9w9ucc86otst46h9"
+        "token_log" => "wCqBWJ3PrIfKDuCbdEfzuSig5VSnSWacBrowsersync"
     ],
 ];

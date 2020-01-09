@@ -1,4 +1,10 @@
 <?php
+/*
+ * @Author: Austin
+ * @Date: 2020-01-09 18:18:25
+ * @LastEditors  : Austin
+ * @LastEditTime : 2020-01-09 21:53:02
+ */
 
 namespace Ifantace\Common;
 
@@ -14,7 +20,6 @@ class CommonServiceProvider extends ServiceProvider
     public function boot()
     {
         // Schema::defaultStringLength(191);
-
         $this->loadRoutesFrom(__DIR__ . '/routes/web.php');
         $this->loadViewsFrom(__DIR__ . '/resources/views', 'Common');
         $this->loadTranslationsFrom(__DIR__ . '/resources/lang', 'Common');
@@ -32,7 +37,6 @@ class CommonServiceProvider extends ServiceProvider
     private function registerPublishables()
     {
         $basePath = __DIR__;
-
         $arrPublishable = [
             'migrations' => [
                 "$basePath/publishable/databases/migrations" => database_path('migrations'),
@@ -41,7 +45,6 @@ class CommonServiceProvider extends ServiceProvider
                 "$basePath/publishable/config" => config_path(),
             ],
         ];
-
         foreach ($arrPublishable as $group => $paths) {
             $this->publishes($paths, $group);
         }

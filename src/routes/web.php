@@ -1,6 +1,14 @@
 <?php
+/*
+ * @Author: Austin
+ * @Date: 2020-01-09 18:18:25
+ * @LastEditors  : Austin
+ * @LastEditTime : 2020-01-09 20:58:02
+ */
 
 $namespace = 'Ifantace\Common\Http\Controllers';
+
+use Illuminate\Support\Facades\Route;
 
 // Route::group([
 //     'namespace' => $namespace,
@@ -8,7 +16,6 @@ $namespace = 'Ifantace\Common\Http\Controllers';
 // ], function () {
 //     Route::get('/', 'HelloWorldController@index');
 // });
-
 //http://localhost/my_package/helloworld
 Route::group(
     [
