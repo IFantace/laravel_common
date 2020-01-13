@@ -51,27 +51,31 @@ class CommonRepository
     ) {
         if (isset($parameter['query'])) {
             $query_string = $parameter['query'];
-            $columns = Schema::connection($this->model->getConnectionName())->getColumnListing($this->model->getTable());
+            $this_connection_name = $this->model->getConnectionName();
+            $this_table_name = $this->model->getTable();
+            $columns = Schema::connection($this_connection_name)->getColumnListing($this_table_name);
             $columns_not_search = array_merge($columns_not_search, array_keys($columns_change_search));
             $columns = array_values(array_diff($columns, $columns_not_search));
             if (preg_match('/[^A-Za-z0-9: ]/', $query_string)) {
                 $columns = array_values(array_diff($columns, ["created_at", "updated_at", "deleted_at"]));
             }
-            $this->model = $this->model->where(function ($query_all_column) use ($columns, $query_string, $columns_change_search, $special_column) {
-                foreach ($columns as $each_column) {
-                    $query_all_column->orWhere($each_column, 'like', '%' . $query_string . '%');
-                }
-                foreach ($special_column as $column_name => $value_array) {
-                    $query_all_column->orWhereIn($column_name, $value_array);
-                }
-                foreach ($columns_change_search as $search_column_name => $change_key_array) {
-                    foreach ($change_key_array as $inside_value => $outer_value) {
-                        if (strpos($outer_value, $query_string) !== false) {
-                            $query_all_column->orWhere($search_column_name, 'like', '%' . $inside_value . '%');
+            $this->model = $this->model->where(
+                function ($query_all_column) use ($columns, $query_string, $columns_change_search, $special_column) {
+                    foreach ($columns as $each_column) {
+                        $query_all_column->orWhere($each_column, 'like', '%' . $query_string . '%');
+                    }
+                    foreach ($special_column as $column_name => $value_array) {
+                        $query_all_column->orWhereIn($column_name, $value_array);
+                    }
+                    foreach ($columns_change_search as $search_column_name => $change_key_array) {
+                        foreach ($change_key_array as $inside_value => $outer_value) {
+                            if (strpos($outer_value, $query_string) !== false) {
+                                $query_all_column->orWhere($search_column_name, 'like', '%' . $inside_value . '%');
+                            }
                         }
                     }
                 }
-            });
+            );
         }
         return $this;
     }

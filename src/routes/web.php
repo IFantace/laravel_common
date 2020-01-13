@@ -3,7 +3,7 @@
  * @Author: Austin
  * @Date: 2020-01-09 18:18:25
  * @LastEditors  : Austin
- * @LastEditTime : 2020-01-09 20:58:02
+ * @LastEditTime : 2020-01-13 16:40:29
  */
 
 $namespace = 'Ifantace\Common\Http\Controllers';

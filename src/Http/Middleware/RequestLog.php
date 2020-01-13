@@ -3,17 +3,19 @@
  * @Author: Austin
  * @Date: 2019-08-01 17:26:23
  * @LastEditors  : Austin
- * @LastEditTime : 2020-01-02 21:10:18
+ * @LastEditTime : 2020-01-13 18:17:14
  */
 
 namespace Ifantace\Common\Http\Middleware;
 
 use Closure;
+use Ifantace\Common\CommonTraits;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 
 class RequestLog
 {
+    use CommonTraits;
     /**
      * Handle an incoming request.
      *
@@ -23,23 +25,22 @@ class RequestLog
      */
     public function handle($request, Closure $next)
     {
-        $user = 'unknown';
         $route = $request->route();
-        Log::getMonolog()->popHandler();
-        try {
-            $user_data = Auth::user();
-            if ($user_data != null) {
-                $user = $user_data['uuid'];
-            }
-            $log_data = array("ip" => $request->ip(), "method" => $request->method(), "url" => $route->uri, "user_uuid" => $user, "parameters" => $request->all);
-            Log::useDailyFiles(storage_path() . "/logs/Request/request.log");
-            Log::info(json_encode($log_data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
-        } catch (\Exception $error) {
-            Log::useDailyFiles(storage_path() . "/logs/Request/request_error.log");
-            Log::error($error->getMessage());
-        }
-        Log::getMonolog()->popHandler();
-        Log::useDailyFiles(storage_path() . "/logs/laravel.log");
+        $event_uuid = $this->genUuid();
+        Log::info(
+            $this->createLogString(
+                "Request: receive",
+                [
+                    "Ip" => $request->ip(),
+                    "Method" => $request->method(),
+                    "Url" => $route->uri,
+                    "User" => $this->getCurrentUserUuid(),
+                    "Parameters" => $request->all
+                ],
+                $event_uuid
+            )
+        );
+        $request->request->add(["event_uuid" => $event_uuid]);
         return $next($request);
     }
 }

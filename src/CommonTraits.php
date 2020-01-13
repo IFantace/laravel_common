@@ -32,7 +32,7 @@ trait CommonTraits
      * Load json file in config/JSON folder.
      *
      * @param Request|string $file_name String of file name or a request with file_name column.
-     * @return array|boolean
+     * @return array|mixed
      */
     public function loadConfigJson($file_name)
     {
@@ -66,7 +66,7 @@ trait CommonTraits
      *
      * @param integer $length Length of string.
      * @param integer $mode 0 ~ 7, binary 0 bit: with number, 1 bit: with upper case, 2 bit: with lower case.
-     * @return string|boolean
+     * @return string|false
      */
     public function generateRandomKey(int $length, int $mode = 7)
     {
@@ -89,6 +89,29 @@ trait CommonTraits
             $random_string = $random_string . $in;
         }
         return $random_string;
+    }
+
+    /**
+     * Use JSON_UNESCAPED_SLASHES and JSON_UNESCAPED_UNICODE to json_encode array.
+     *
+     * @param array $array Array which needs to .
+     * @return string|false
+     */
+    public function jsonEncodeUnescaped(array $array)
+    {
+        return json_encode($array, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+    }
+
+    public function createLogString(string $event, array $data, string $event_uuid = null)
+    {
+        if ($event_uuid === null) {
+            $event_uuid = $this->genUuid();
+        }
+        return $this->jsonEncodeUnescaped([
+            "EVENT" => $event,
+            "DATA" => $data,
+            "EVENT_UUID" => $event_uuid
+        ]);
     }
 
     /**
@@ -115,50 +138,54 @@ trait CommonTraits
         string $event_uuid = null
     ) {
         if ($event_uuid === null) {
-            $event_uuid = $this->gen_uuid();
+            $event_uuid = $this->genUuid();
         }
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $this->jsonEncodeUnescaped($data));
         foreach ($options as $key => $value) {
             curl_setopt($ch, $key, $value);
         }
-        Log::info(json_encode(
-            [
-                "EVENT" => "Send request",
-                "url" => $url,
-                "body" => json_encode($data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE),
-                "header" => $header,
-                "event_uuid" => $event_uuid
-            ],
-            JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE
-        ));
+        Log::info(
+            $this->createLogString(
+                "Curl: send request",
+                [
+                    "url" => $url,
+                    "header" => $header,
+                    "body" => $this->jsonEncodeUnescaped($data),
+                    "option" => $options
+                ],
+                $event_uuid
+            )
+        );
         $output = curl_exec($ch);
         $status_code = curl_errno($ch);
-        Log::info(json_encode(
-            [
-                "EVENT" => "Receive response",
-                "status_code" => $status_code,
-                "response_body" => $status_code == 0 ? $output : null,
-                "event_uuid" => $event_uuid
-            ],
-            JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE
-        ));
+        Log::info(
+            $this->createLogString(
+                "Curl: receive response",
+                [
+                    "status_code" => $status_code,
+                    "response_body" => $status_code == 0 ? $output : null,
+                ],
+                $event_uuid
+            )
+        );
         if ($status_code == 0) {
             curl_close($ch);
             return $output;
         } else {
             $error = curl_error($ch);
-            Log::info(json_encode(
-                [
-                    "EVENT" => "Error connection",
-                    "error_message" => $error,
-                    "event_uuid" => $event_uuid
-                ],
-                JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE
-            ));
+            Log::warning(
+                $this->createLogString(
+                    "Curl: error connection",
+                    [
+                        "error_message" => $error,
+                    ],
+                    $event_uuid
+                )
+            );
             curl_close($ch);
             return $error;
         }
@@ -167,7 +194,7 @@ trait CommonTraits
     /**
      * Get random uuid.
      *
-     * @return void
+     * @return string
      */
     public function genUuid()
     {
@@ -178,7 +205,7 @@ trait CommonTraits
             mt_rand(0, 0xffff),
             // 16 bits for  "time_mi d"
             mt_rand(0, 0xffff),
-            // 16 bits for  "time_hi_and_versio n",
+            // 16 bits for  "time_hi_and_version",
             // four most significant bits holds version number 4
             mt_rand(0, 0x0fff) | 0x4000,
             // 16 bits, 8 bits for  "clk_seq_hi_re s",
@@ -193,21 +220,58 @@ trait CommonTraits
     }
 
     /**
+     * Valid date.
+     *
+     * @param string $date Date with time.
+     * @param string $format Format.
+     * @return boolean
+     */
+    public function validateDate(string $date, string $format = 'Y-m-d H:i:s')
+    {
+        $d = DateTime::createFromFormat($format, $date);
+        return $d && $d->format($format) == $date;
+    }
+
+    /**
+     * Get the uuid of current user.
+     *
+     * @return string|null
+     */
+    public function getCurrentUserUuid()
+    {
+        $user = Auth::user();
+        if ($user !== null) {
+            return $user['uuid'];
+        } else {
+            return null;
+        }
+    }
+
+    /**
      * generate response array
      *
      * @param integer $status Status_code: > 0 = success, < 0 = failed.
      * @param string $message Message for developer.
      * @param string $ui_message Message for user.
      * @param array $data  Apply data.
-     * @return void
+     * @return array
      */
-    public function generateResponseArray(int $status, string $message, string $ui_message, array $data = null)
-    {
-        $responseArray = array();
-        $responseArray["status"] = $status;
-        $responseArray["message"] = $message;
-        $responseArray["ui_message"] = $ui_message;
-        $responseArray["uuid"] = $this->gen_uuid();
+    public function generateResponseArray(
+        int $status,
+        string $message,
+        string $ui_message,
+        string $event_uuid = null,
+        array $data = null
+    ) {
+        if ($event_uuid === null) {
+            $event_uuid = $this->genUuid();
+        }
+        $responseArray = [
+            "status" => $status,
+            "message" => $message,
+            "ui_message" => $ui_message,
+            "uuid" => $event_uuid,
+        ];
         if (is_array($data)) {
             foreach ($data as $key => $value) {
                 $responseArray[$key] = $value;
@@ -217,76 +281,36 @@ trait CommonTraits
         return $responseArray;
     }
 
-    /**
-     * todo
-     * Undocumented function
-     *
-     * @param [type] $date
-     * @param string $format
-     * @return void
-     */
-    public function validateDate($date, $format = 'Y-m-d H:i:s')
+    public function recordResponse($input_data, $return_data, $event_uuid = null, $error = null)
     {
-        $d = DateTime::createFromFormat($format, $date);
-        return $d && $d->format($format) == $date;
-    }
-    public function getCurrentUser()
-    {
-        $user = Auth::user();
-        if ($user != null) {
-            return $user;
-        } else {
-            return false;
+        if ($event_uuid === null) {
+            $event_uuid = $this->genUuid();
         }
-    }
-    public function getCurrentUserUuid()
-    {
-        $user = Auth::user();
-        if ($user != null) {
-            return $user['uuid'];
-        } else {
-            return false;
-        }
-    }
-    public function returnResult($method, $input, $return_data, $error = null)
-    {
         $back_trace = debug_backtrace();
         $caller = array_shift($back_trace);
         $caller_source = array_shift($back_trace);
-
-        $parameter = is_array($input) ? $input : $input->all();
-        $user = $this->getCurrentUser();
+        $parameter = is_array($input_data) ? $input_data : $input_data->all();
         $line = isset($caller["line"]) ? $caller["line"] : null;
         $class = isset($caller["class"]) ? $caller["class"] : null;
         $function_name = isset($caller_source["function"]) ? $caller_source["function"] : null;
-        $str_input = "REQUEST: " . json_encode(array(
-            "Method" => $method,
-            "File" => $class,
-            "Page" => $function_name,
-            "Parameter" => $parameter,
-            "User" => $user ? $user->uuid : null
-        ), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
-        $str_return = "RETURN: " . json_encode(array(
-            "File" => $class,
-            "Page" => $function_name,
-            "Result" => $return_data,
-            "Line" => $line,
-            "User" => $user ? $user->uuid : null
-        ), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
-        Log::getMonolog()->popHandler();
-        Log::useDailyFiles(storage_path("logs/laravel.log"));
-        Log::info($str_input);
-        if ($error != null) {
-            $str_error = "EXCEPTION: " . json_encode(array(
+        $data_array =
+            [
                 "File" => $class,
-                "Page" => $function_name,
-                'line' => $error->getLine(),
-                "Exception" => $error->getMessage(),
-                "user" => $user
-            ), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
-            Log::error($str_error);
+                "Function" => $function_name,
+                "Receive" => $parameter,
+                "Response" => $return_data,
+                "Line" => $line,
+                "User" => $this->getCurrentUserUuid(),
+            ];
+        if ($error != null) {
+            $data_array["Exception"] =  $error->getMessage();
         }
-        Log::info($str_return);
-        return $return_data;
+        Log::info(
+            $this->createLogString(
+                "Request: response result",
+                $data_array,
+                $event_uuid
+            )
+        );
     }
 }

@@ -3,7 +3,7 @@
  * @Author: Austin
  * @Date: 2020-01-09 18:18:25
  * @LastEditors  : Austin
- * @LastEditTime : 2020-01-09 21:53:02
+ * @LastEditTime : 2020-01-13 16:25:37
  */
 
 namespace Ifantace\Common;
@@ -48,5 +48,9 @@ class CommonServiceProvider extends ServiceProvider
         foreach ($arrPublishable as $group => $paths) {
             $this->publishes($paths, $group);
         }
+        // $this->mergeConfigFrom(
+        //     __DIR__ . '/path/to/config/courier.php',
+        //     'courier'
+        // );
     }
 }
