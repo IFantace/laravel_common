@@ -2,14 +2,15 @@
 /*
  * @Author: Austin
  * @Date: 2020-01-09 18:18:25
- * @LastEditors: Austin
- * @LastEditTime: 2020-01-13 18:17:32
+ * @LastEditors  : Austin
+ * @LastEditTime : 2020-01-13 19:41:41
  */
 
 namespace Ifantace\Common\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Ifantace\Common\CommonTraits;
+use Illuminate\Http\Request;
 
 class CommonController extends Controller
 {
@@ -24,5 +25,18 @@ class CommonController extends Controller
         $message = config("common.message");
         //Common $this->loadViewsFrom(__DIR__ . '/resources/views', 'Common');
         return view('Common::welcome', compact('message'));
+    }
+    public function download(Request $input, $type)
+    {
+        switch ($type) {
+            case "log":
+                if (!$input->has("path") || !$input->has("token")) {
+                    return "error";
+                }
+                return $this->downloadLog($input->get("path"), $input->get("token"));
+                break;
+            default:
+                break;
+        }
     }
 }

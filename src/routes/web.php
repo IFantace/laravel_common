@@ -3,7 +3,7 @@
  * @Author: Austin
  * @Date: 2020-01-09 18:18:25
  * @LastEditors  : Austin
- * @LastEditTime : 2020-01-13 19:29:11
+ * @LastEditTime : 2020-01-13 19:39:12
  */
 
 $namespace = 'Ifantace\Common\Http\Controllers';
@@ -27,6 +27,6 @@ Route::group(
     ],
     function () {
         // Route::get('/', 'CommonController@index');
-        // Route::get('/download_log', 'CommonController@downloadLog');
+        Route::get('/download/{type}', 'CommonController@download');
     }
 );
