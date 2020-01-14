@@ -283,9 +283,6 @@ trait CommonTraits
 
     public function recordResponse($input_data, $return_data, $event_uuid = null, $error = null)
     {
-        if ($event_uuid === null) {
-            $event_uuid = $this->genUuid();
-        }
         $back_trace = debug_backtrace();
         $caller = array_shift($back_trace);
         $caller_source = array_shift($back_trace);
@@ -293,6 +290,12 @@ trait CommonTraits
         $line = isset($caller["line"]) ? $caller["line"] : null;
         $class = isset($caller["class"]) ? $caller["class"] : null;
         $function_name = isset($caller_source["function"]) ? $caller_source["function"] : null;
+        if (isset($parameter["event_uuid"])) {
+            $event_uuid = $parameter["event_uuid"];
+        }
+        if ($event_uuid === null) {
+            $event_uuid = $this->genUuid();
+        }
         $data_array =
             [
                 "File" => $class,
