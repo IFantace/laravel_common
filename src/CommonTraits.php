@@ -261,7 +261,7 @@ trait CommonTraits
         string $message,
         string $ui_message,
         string $event_uuid = null,
-        array $data = null
+        array $data = []
     ) {
         if ($event_uuid === null) {
             $event_uuid = $this->genUuid();
@@ -281,6 +281,15 @@ trait CommonTraits
         return $responseArray;
     }
 
+    /**
+     * record this time response.
+     *
+     * @param array|Request $input_data request data or array
+     * @param array $return_data response array
+     * @param string $event_uuid event uuid
+     * @param Exception $error exception
+     * @return void
+     */
     public function recordResponse($input_data, $return_data, $event_uuid = null, $error = null)
     {
         $back_trace = debug_backtrace();
@@ -315,5 +324,27 @@ trait CommonTraits
                 $event_uuid
             )
         );
+    }
+
+    /**
+     * Check does obj have duplicate data in database
+     *
+     * @param object $obj repository
+     * @param string $event_uuid event uuid
+     * @param array $data data need to response
+     * @return array
+     */
+    public function checkDuplicate($obj, string $event_uuid = null, array $data = [])
+    {
+        if ($obj->findDuplicate()) {
+            return $this->generateResponseArray(
+                -2,
+                'duplicate',
+                trans('general.duplicate'),
+                $event_uuid,
+                $data
+            );
+        }
+        return ["status" => 1];
     }
 }
