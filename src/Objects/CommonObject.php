@@ -3,10 +3,10 @@
  * @Author: Austin
  * @Date: 2019-12-27 17:49:13
  * @LastEditors  : Austin
- * @LastEditTime : 2020-01-13 19:08:20
+ * @LastEditTime : 2020-01-14 17:53:14
  */
 
-namespace App\Manager;
+namespace Ifantace\Common\Objects;
 
 use Ifantace\Common\CommonTraits;
 use Illuminate\Support\Facades\Auth;
