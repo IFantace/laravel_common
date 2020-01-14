@@ -3,7 +3,7 @@
  * @Author: Austin
  * @Date: 2020-01-09 18:18:25
  * @LastEditors  : Austin
- * @LastEditTime : 2020-01-14 18:24:46
+ * @LastEditTime : 2020-01-14 18:57:40
  */
 
 namespace Ifantace\Common\Http\Services;
@@ -19,16 +19,5 @@ class CommonService
     public function initInput(Request $input)
     {
         $this->input = $input;
-    }
-    public function checkDuplicate($obj)
-    {
-        if ($obj->findDuplicate()) {
-            return $this->generateResponseArray(
-                -2,
-                'duplicate',
-                trans('general.duplicate')
-            );
-        }
-        return ["status" => 1];
     }
 }
