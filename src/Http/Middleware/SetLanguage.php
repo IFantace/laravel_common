@@ -1,9 +1,10 @@
 <?php
+
 /*
  * @Author: Austin
  * @Date: 2020-01-09 18:18:25
- * @LastEditors: Austin
- * @LastEditTime: 2020-01-13 18:03:51
+ * @LastEditors  : Austin
+ * @LastEditTime : 2020-02-05 20:06:51
  */
 
 namespace Ifantace\Common\Http\Middleware;
@@ -28,7 +29,6 @@ class SetLanguage
                 case "english":
                     App::setlocale("en");
                     break;
-
                 case "chinese":
                 case "zh":
                 case "zh_tw":

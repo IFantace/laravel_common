@@ -1,9 +1,10 @@
 <?php
+
 /*
  * @Author: Austin
  * @Date: 2019-12-27 17:49:13
  * @LastEditors  : Austin
- * @LastEditTime : 2020-01-14 19:18:38
+ * @LastEditTime : 2020-02-05 20:06:23
  */
 
 namespace Ifantace\Common\Objects;
@@ -14,6 +15,7 @@ use Illuminate\Support\Facades\Auth;
 abstract class CommonObject
 {
     use CommonTraits;
+
     protected $repository;
     protected $creator;
     /**

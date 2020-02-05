@@ -1,9 +1,10 @@
 <?php
+
 /*
  * @Author: Austin
  * @Date: 2020-01-09 18:18:25
  * @LastEditors  : Austin
- * @LastEditTime : 2020-01-14 18:57:40
+ * @LastEditTime : 2020-02-05 20:07:06
  */
 
 namespace Ifantace\Common\Http\Services;
@@ -14,6 +15,7 @@ use Illuminate\Http\Request;
 class CommonService
 {
     use CommonTraits;
+
     protected $input;
 
     public function initInput(Request $input)

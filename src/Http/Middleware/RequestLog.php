@@ -1,9 +1,10 @@
 <?php
+
 /*
  * @Author: Austin
  * @Date: 2019-08-01 17:26:23
  * @LastEditors  : Austin
- * @LastEditTime : 2020-01-13 18:17:14
+ * @LastEditTime : 2020-02-05 20:05:59
  */
 
 namespace Ifantace\Common\Http\Middleware;
@@ -16,6 +17,7 @@ use Illuminate\Support\Facades\Auth;
 class RequestLog
 {
     use CommonTraits;
+
     /**
      * Handle an incoming request.
      *
@@ -35,7 +37,7 @@ class RequestLog
                     "Method" => $request->method(),
                     "Url" => $route->uri,
                     "User" => $this->getCurrentUserUuid(),
-                    "Parameters" => $request->all
+                    "Parameters" => $request->all()
                 ],
                 $event_uuid
             )

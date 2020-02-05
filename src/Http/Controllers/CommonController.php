@@ -1,9 +1,10 @@
 <?php
+
 /*
  * @Author: Austin
  * @Date: 2020-01-09 18:18:25
  * @LastEditors  : Austin
- * @LastEditTime : 2020-01-13 19:41:41
+ * @LastEditTime : 2020-02-05 20:06:59
  */
 
 namespace Ifantace\Common\Http\Controllers;
@@ -15,6 +16,7 @@ use Illuminate\Http\Request;
 class CommonController extends Controller
 {
     use CommonTraits;
+
     /**
      * Display a listing of the resource.
      *

@@ -1,9 +1,10 @@
 <?php
+
 /*
  * @Author: Austin
  * @Date: 2020-01-09 18:18:25
  * @LastEditors  : Austin
- * @LastEditTime : 2020-01-13 16:25:37
+ * @LastEditTime : 2020-02-05 20:06:43
  */
 
 namespace Ifantace\Common;
