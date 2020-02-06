@@ -301,6 +301,7 @@ trait CommonTraits
         $function_name = isset($caller_source["function"]) ? $caller_source["function"] : null;
         if (isset($parameter["event_uuid"])) {
             $event_uuid = $parameter["event_uuid"];
+            unset($parameter["event_uuid"]);
         }
         if ($event_uuid === null) {
             $event_uuid = $this->genUuid();
