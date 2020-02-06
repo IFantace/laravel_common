@@ -109,7 +109,7 @@ trait CommonTraits
         }
         return $this->jsonEncodeUnescaped([
             "EVENT-NAME" => $event,
-            "CONTENT" => $data,
+            "EVENT-CONTENT" => $data,
             "EVENT-UUID" => $event_uuid
         ]);
     }
