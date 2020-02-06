@@ -108,9 +108,9 @@ trait CommonTraits
             $event_uuid = $this->genUuid();
         }
         return $this->jsonEncodeUnescaped([
-            "EVENT" => $event,
-            "DATA" => $data,
-            "EVENT_UUID" => $event_uuid
+            "EVENT-NAME" => $event,
+            "CONTENT" => $data,
+            "EVENT-UUID" => $event_uuid
         ]);
     }
 
@@ -150,12 +150,12 @@ trait CommonTraits
         }
         Log::info(
             $this->createLogString(
-                "Curl: send request",
+                "Curl-Send",
                 [
-                    "url" => $url,
-                    "header" => $header,
-                    "body" => $this->jsonEncodeUnescaped($data),
-                    "option" => $options
+                    "Url" => $url,
+                    "Header" => $header,
+                    "Body" => $this->jsonEncodeUnescaped($data),
+                    "Option" => $options
                 ],
                 $event_uuid
             )
@@ -164,10 +164,10 @@ trait CommonTraits
         $status_code = curl_errno($ch);
         Log::info(
             $this->createLogString(
-                "Curl: receive response",
+                "Curl-Receive",
                 [
-                    "status_code" => $status_code,
-                    "response_body" => $status_code == 0 ? $output : null,
+                    "StatusCode" => $status_code,
+                    "ResponseBody" => $status_code == 0 ? $output : null,
                 ],
                 $event_uuid
             )
@@ -179,9 +179,9 @@ trait CommonTraits
             $error = curl_error($ch);
             Log::warning(
                 $this->createLogString(
-                    "Curl: error connection",
+                    "Curl-Error",
                     [
-                        "error_message" => $error,
+                        "ErrorMessage" => $error,
                     ],
                     $event_uuid
                 )
@@ -315,11 +315,11 @@ trait CommonTraits
                 "User" => $this->getCurrentUserUuid(),
             ];
         if ($error != null) {
-            $data_array["Exception"] =  $error->getMessage();
+            $data_array["Exception"] =  $error->getMessage() . " at line: " . $error->getLine();
         }
         Log::info(
             $this->createLogString(
-                "Request: response result",
+                "Request-Response",
                 $data_array,
                 $event_uuid
             )

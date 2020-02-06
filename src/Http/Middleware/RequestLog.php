@@ -4,7 +4,7 @@
  * @Author: Austin
  * @Date: 2019-08-01 17:26:23
  * @LastEditors  : Austin
- * @LastEditTime : 2020-02-05 20:05:59
+ * @LastEditTime : 2020-02-06 16:16:30
  */
 
 namespace Ifantace\Common\Http\Middleware;
@@ -31,7 +31,7 @@ class RequestLog
         $event_uuid = $this->genUuid();
         Log::info(
             $this->createLogString(
-                "Request: receive",
+                "Request-Receive",
                 [
                     "Ip" => $request->ip(),
                     "Method" => $request->method(),
