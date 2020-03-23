@@ -160,7 +160,6 @@ trait CommonTraits
                     "Option" => $options,
                     "RequestId" => $request_id
                 ],
-                $this->event_uuid
             )
         );
         $output = curl_exec($ch);
@@ -173,7 +172,6 @@ trait CommonTraits
                     "ResponseBody" => $status_code == 0 ? $output : null,
                     "RequestId" => $request_id
                 ],
-                $this->event_uuid
             )
         );
         if ($status_code == 0) {
@@ -188,7 +186,6 @@ trait CommonTraits
                         "ErrorMessage" => $error,
                         "RequestId" => $request_id
                     ],
-                    $this->event_uuid
                 )
             );
             curl_close($ch);
@@ -325,7 +322,6 @@ trait CommonTraits
             $this->createLogString(
                 "Request-Response",
                 $data_array,
-                $this->event_uuid
             )
         );
     }
@@ -344,7 +340,6 @@ trait CommonTraits
                 -2,
                 'duplicate',
                 trans('general.duplicate'),
-                $this->event_uuid,
                 $data
             );
         }
