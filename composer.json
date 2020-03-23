@@ -7,10 +7,12 @@
         "laravel/framework": ">=5.7"
     },
     "license": "MIT",
-    "authors": [{
-        "name": "IFantace",
-        "email": "aa431125@gmail.com"
-    }],
+    "authors": [
+        {
+            "name": "IFantace",
+            "email": "aa431125@gmail.com"
+        }
+    ],
     "minimum-stability": "beta",
     "autoload": {
         "psr-4": {

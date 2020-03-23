@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Log;
 
 trait CommonTraits
 {
+    private $event_uuid;
+
     /**
      * Download log file in storage.
      *
@@ -102,15 +104,15 @@ trait CommonTraits
         return json_encode($array, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
     }
 
-    public function createLogString(string $event, array $data, string $event_uuid = null)
+    public function createLogString(string $event, array $data)
     {
-        if ($event_uuid === null) {
-            $event_uuid = $this->genUuid();
+        if ($this->event_uuid === null) {
+            $this->event_uuid = $this->genUuid();
         }
         return $this->jsonEncodeUnescaped([
             "EVENT-NAME" => $event,
             "EVENT-CONTENT" => $data,
-            "EVENT-UUID" => $event_uuid
+            "EVENT-UUID" => $this->event_uuid
         ]);
     }
 
@@ -120,7 +122,6 @@ trait CommonTraits
      * @param string $url Url.
      * @param array $data Post data.
      * @param array $header Headers.
-     * @param string $event_uuid This request event uuid
      * @return array|string
      */
     public function sendCurlPostJSON(
@@ -134,15 +135,16 @@ trait CommonTraits
             CURLOPT_SSL_VERIFYHOST => false,
             CURLOPT_CONNECTTIMEOUT => 0,
             CURLOPT_TIMEOUT => 15
-        ],
-        string $event_uuid = null
+        ]
     ) {
-        if ($event_uuid === null) {
-            $event_uuid = $this->genUuid();
+        if ($this->event_uuid === null) {
+            $this->event_uuid = $this->genUuid();
         }
+        $request_id = $this->generateRandomKey(8);
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $this->jsonEncodeUnescaped($data));
         foreach ($options as $key => $value) {
@@ -155,9 +157,10 @@ trait CommonTraits
                     "Url" => $url,
                     "Header" => $header,
                     "Body" => $this->jsonEncodeUnescaped($data),
-                    "Option" => $options
+                    "Option" => $options,
+                    "RequestId" => $request_id
                 ],
-                $event_uuid
+                $this->event_uuid
             )
         );
         $output = curl_exec($ch);
@@ -168,8 +171,9 @@ trait CommonTraits
                 [
                     "StatusCode" => $status_code,
                     "ResponseBody" => $status_code == 0 ? $output : null,
+                    "RequestId" => $request_id
                 ],
-                $event_uuid
+                $this->event_uuid
             )
         );
         if ($status_code == 0) {
@@ -182,8 +186,9 @@ trait CommonTraits
                     "Curl-Error",
                     [
                         "ErrorMessage" => $error,
+                        "RequestId" => $request_id
                     ],
-                    $event_uuid
+                    $this->event_uuid
                 )
             );
             curl_close($ch);
@@ -260,17 +265,16 @@ trait CommonTraits
         int $status,
         string $message,
         string $ui_message,
-        string $event_uuid = null,
         array $data = []
     ) {
-        if ($event_uuid === null) {
-            $event_uuid = $this->genUuid();
+        if ($this->event_uuid === null) {
+            $this->event_uuid = $this->genUuid();
         }
         $responseArray = [
             "status" => $status,
             "message" => $message,
             "ui_message" => $ui_message,
-            "uuid" => $event_uuid,
+            "uuid" => $this->event_uuid,
         ];
         if (is_array($data)) {
             foreach ($data as $key => $value) {
@@ -286,11 +290,10 @@ trait CommonTraits
      *
      * @param array|Request $input_data request data or array
      * @param array $return_data response array
-     * @param string $event_uuid event uuid
      * @param Exception $error exception
      * @return void
      */
-    public function recordResponse($input_data, $return_data, $event_uuid = null, $error = null)
+    public function recordResponse($input_data, $return_data, $error = null)
     {
         $back_trace = debug_backtrace();
         $caller = array_shift($back_trace);
@@ -300,11 +303,11 @@ trait CommonTraits
         $class = isset($caller["class"]) ? $caller["class"] : null;
         $function_name = isset($caller_source["function"]) ? $caller_source["function"] : null;
         if (isset($parameter["event_uuid"])) {
-            $event_uuid = $parameter["event_uuid"];
+            $this->event_uuid = $parameter["event_uuid"];
             unset($parameter["event_uuid"]);
         }
-        if ($event_uuid === null) {
-            $event_uuid = $this->genUuid();
+        if ($this->event_uuid === null) {
+            $this->event_uuid = $this->genUuid();
         }
         $data_array =
             [
@@ -322,7 +325,7 @@ trait CommonTraits
             $this->createLogString(
                 "Request-Response",
                 $data_array,
-                $event_uuid
+                $this->event_uuid
             )
         );
     }
@@ -331,18 +334,17 @@ trait CommonTraits
      * Check does obj have duplicate data in database
      *
      * @param object $obj repository
-     * @param string $event_uuid event uuid
      * @param array $data data need to response
      * @return array
      */
-    public function checkDuplicate($obj, string $event_uuid = null, array $data = [])
+    public function checkDuplicate($obj, array $data = [])
     {
         if ($obj->findDuplicate()) {
             return $this->generateResponseArray(
                 -2,
                 'duplicate',
                 trans('general.duplicate'),
-                $event_uuid,
+                $this->event_uuid,
                 $data
             );
         }
