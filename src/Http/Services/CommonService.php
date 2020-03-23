@@ -4,7 +4,7 @@
  * @Author: Austin
  * @Date: 2020-01-09 18:18:25
  * @LastEditors  : Austin
- * @LastEditTime : 2020-03-23 11:26:52
+ * @LastEditTime : 2020-03-23 11:53:38
  */
 
 namespace Ifantace\Common\Http\Services;
@@ -27,7 +27,7 @@ class CommonService
     public function initInput(Request $input)
     {
         $this->input = $input;
-        if ($input->has("event_uuid") && !isset("event_uuid")) {
+        if ($input->has("event_uuid") && $this->event_uuid === null) {
             $this->event_uuid = $input->get("event_uuid");
         }
     }
