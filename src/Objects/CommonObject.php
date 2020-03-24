@@ -4,7 +4,7 @@
  * @Author: Austin
  * @Date: 2019-12-27 17:49:13
  * @LastEditors  : Austin
- * @LastEditTime : 2020-02-05 20:06:23
+ * @LastEditTime : 2020-03-24 19:05:33
  */
 
 namespace Ifantace\Common\Objects;
@@ -136,6 +136,17 @@ abstract class CommonObject
     public function filterColumnByUpdatableColumn()
     {
         return $this->filterByColumn($this->updatable_column);
+    }
+
+    /**
+     * 取得指定的資料欄位array
+     *
+     * @param string $column_name
+     * @return array
+     */
+    public function getColumn(string $column_name = "all_column"): array
+    {
+        return $this->$column_name;
     }
     /**
      * 初始化Object可用欄位
