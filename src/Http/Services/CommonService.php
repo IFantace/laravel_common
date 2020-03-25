@@ -4,7 +4,7 @@
  * @Author: Austin
  * @Date: 2020-01-09 18:18:25
  * @LastEditors  : Austin
- * @LastEditTime : 2020-03-25 17:35:01
+ * @LastEditTime : 2020-03-25 17:41:46
  */
 
 namespace Ifantace\Common\Http\Services;
@@ -34,10 +34,10 @@ class CommonService
         }
     }
 
-    public function setResponseArray(int $statue, string $message, string $ui_message)
+    public function setResponseArray(int $status, string $message, string $ui_message)
     {
         $this->response_array = $this->generateResponseArray(
-            $statue,
+            $status,
             $message,
             $ui_message
         );

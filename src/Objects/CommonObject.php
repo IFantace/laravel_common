@@ -4,7 +4,7 @@
  * @Author: Austin
  * @Date: 2019-12-27 17:49:13
  * @LastEditors  : Austin
- * @LastEditTime : 2020-03-24 19:05:33
+ * @LastEditTime : 2020-03-25 18:29:50
  */
 
 namespace Ifantace\Common\Objects;
@@ -50,9 +50,9 @@ abstract class CommonObject
     public function setCreator()
     {
         $this->creator = Auth::user();
-        if ($this->creator !== null) {
-            $this->creator_uuid = $this->creator->uuid;
-        }
+        // if ($this->creator !== null) {
+        //     $this->creator_uuid = $this->creator->uuid;
+        // }
     }
     /**
      * 透過primary key，則搜尋並設定data
