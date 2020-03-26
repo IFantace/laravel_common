@@ -47,6 +47,11 @@ class CommonRepository
     {
         return $this->model->updateOrCreate($query_condition, $data_array);
     }
+    public function select(array $columns)
+    {
+        $this->model = $this->model->select($columns);
+        return $this;
+    }
     public function searchAllColumn(
         array $parameter,
         array $columns_not_search = array(),
