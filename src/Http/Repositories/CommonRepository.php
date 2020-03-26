@@ -43,6 +43,10 @@ class CommonRepository
     {
         return $this->model->firstOrCreate($first_data, $create_data);
     }
+    public function updateOrCreate(array $query_condition, array $data_array)
+    {
+        return $this->model->updateOrCreate($query_condition, $data_array);
+    }
     public function searchAllColumn(
         array $parameter,
         array $columns_not_search = array(),
