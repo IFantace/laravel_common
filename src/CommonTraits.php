@@ -11,7 +11,7 @@ use Ifantace\Common\Objects\ResponseException;
 
 trait CommonTraits
 {
-    private $event_uuid;
+    protected $event_uuid;
 
     /**
      * Download log file in storage.
