@@ -4,7 +4,7 @@
  * @Author: Austin
  * @Date: 2019-12-27 17:49:13
  * @LastEditors  : Austin
- * @LastEditTime : 2020-03-27 12:03:50
+ * @LastEditTime : 2020-03-27 15:34:15
  */
 
 namespace Ifantace\Common\Objects;
@@ -77,8 +77,14 @@ abstract class CommonObject
     {
         $this_column = $column === null ? $this->settable_column : $column;
         foreach ($this_column as $each_column) {
-            if (isset($data->$each_column)) {
-                $this->$each_column = $data->$each_column;
+            if (is_array($data)) {
+                if (isset($data[$each_column])) {
+                    $this->$each_column = $data[$each_column];
+                }
+            } else {
+                if (isset($data->$each_column)) {
+                    $this->$each_column = $data->$each_column;
+                }
             }
         }
         $this->initSystemData();
@@ -146,6 +152,10 @@ abstract class CommonObject
     public function getColumn(string $column_name = "all_column"): array
     {
         return $this->$column_name;
+    }
+    public function isDuplicate()
+    {
+        return $this->findDuplicate() !== null;
     }
     /**
      * 初始化Object可用欄位

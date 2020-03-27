@@ -4,13 +4,12 @@
  * @Author: Austin
  * @Date: 2020-01-09 18:18:25
  * @LastEditors  : Austin
- * @LastEditTime : 2020-03-25 17:41:46
+ * @LastEditTime : 2020-03-27 15:53:03
  */
 
 namespace Ifantace\Common\Http\Services;
 
 use Ifantace\Common\CommonTraits;
-use Ifantace\Common\Objects\ResponseException;
 use Illuminate\Http\Request;
 
 class CommonService
@@ -34,19 +33,22 @@ class CommonService
         }
     }
 
-    public function setResponseArray(int $status, string $message, string $ui_message)
+    /**
+     * 設定service的response
+     *
+     * @param integer $status
+     * @param string $message
+     * @param string $ui_message
+     * @param array $data
+     * @return void
+     */
+    public function setResponseArray(int $status, string $message, string $ui_message, array $data = [])
     {
         $this->response_array = $this->generateResponseArray(
             $status,
             $message,
-            $ui_message
+            $ui_message,
+            $data
         );
-    }
-
-    public function throwResponseException()
-    {
-        $this_exception = new ResponseException($this->response_array["message"]);
-        $this_exception->setResponse($this->response_array);
-        throw $this_exception;
     }
 }

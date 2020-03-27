@@ -4,7 +4,7 @@
  * @Author: Austin
  * @Date: 2019-08-01 17:26:23
  * @LastEditors  : Austin
- * @LastEditTime : 2020-02-06 16:16:30
+ * @LastEditTime : 2020-03-27 16:17:55
  */
 
 namespace Ifantace\Common\Http\Middleware;
@@ -28,7 +28,7 @@ class RequestLog
     public function handle($request, Closure $next)
     {
         $route = $request->route();
-        $event_uuid = $this->genUuid();
+        $this->event_uuid = $this->genUuid();
         Log::info(
             $this->createLogString(
                 "Request-Receive",
@@ -39,10 +39,10 @@ class RequestLog
                     "User" => $this->getCurrentUserUuid(),
                     "Parameters" => $request->all()
                 ],
-                $event_uuid
+                $this->event_uuid
             )
         );
-        $request->request->add(["event_uuid" => $event_uuid]);
+        $request->request->add(["event_uuid" => $this->event_uuid]);
         return $next($request);
     }
 }

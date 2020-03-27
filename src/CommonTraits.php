@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
+use Ifantace\Common\Objects\ResponseException;
 
 trait CommonTraits
 {
@@ -327,22 +328,15 @@ trait CommonTraits
     }
 
     /**
-     * Check does obj have duplicate data in database
+     * 用於中斷程式
      *
-     * @param object $obj repository
-     * @param array $data data need to response
-     * @return array
+     * @param [type] $response_array
+     * @return void
      */
-    public function checkDuplicate($obj, array $data = [])
+    public function throwResponseException($response_array)
     {
-        if ($obj->findDuplicate()) {
-            return $this->generateResponseArray(
-                -2,
-                'duplicate',
-                trans('general.duplicate'),
-                $data
-            );
-        }
-        return ["status" => 1];
+        $this_exception = new ResponseException($response_array["message"]);
+        $this_exception->setResponse($response_array);
+        throw $this_exception;
     }
 }
