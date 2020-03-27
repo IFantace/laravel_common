@@ -4,7 +4,7 @@
  * @Author: Austin
  * @Date: 2019-12-27 17:49:13
  * @LastEditors  : Austin
- * @LastEditTime : 2020-03-25 18:29:50
+ * @LastEditTime : 2020-03-27 12:03:50
  */
 
 namespace Ifantace\Common\Objects;
@@ -64,7 +64,6 @@ abstract class CommonObject
     {
         $data = $this->findDataByPrimary($primary_key);
         if ($data !== null) {
-            $data = $data->toArray();
             $this->setData($data, $this->all_column);
         }
     }
@@ -78,8 +77,8 @@ abstract class CommonObject
     {
         $this_column = $column === null ? $this->settable_column : $column;
         foreach ($this_column as $each_column) {
-            if (isset($data[$each_column])) {
-                $this->$each_column = $data[$each_column];
+            if (isset($data->$each_column)) {
+                $this->$each_column = $data->$each_column;
             }
         }
         $this->initSystemData();
