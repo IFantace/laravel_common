@@ -4,7 +4,7 @@
  * @Author: Austin
  * @Date: 2019-08-01 17:26:23
  * @LastEditors  : Austin
- * @LastEditTime : 2020-03-27 16:17:55
+ * @LastEditTime : 2020-03-30 14:18:17
  */
 
 namespace Ifantace\Common\Http\Middleware;
@@ -12,7 +12,6 @@ namespace Ifantace\Common\Http\Middleware;
 use Closure;
 use Ifantace\Common\CommonTraits;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Auth;
 
 class RequestLog
 {

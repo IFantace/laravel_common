@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 use Ifantace\Common\Objects\ResponseException;
+use Throwable;
 
 trait CommonTraits
 {
@@ -265,14 +266,19 @@ trait CommonTraits
         string $ui_message,
         array $data = []
     ) {
-        if ($this->event_uuid === null) {
-            $this->event_uuid = $this->genUuid();
-        }
+        $back_trace = debug_backtrace();
+        $caller = array_shift($back_trace);
+        $caller_source = array_shift($back_trace);
         $responseArray = [
             "status" => $status,
             "message" => $message,
             "ui_message" => $ui_message,
             "uuid" => $this->event_uuid,
+            "file" => [
+                "class" => isset($caller["class"]) ? $caller["class"] : null,
+                "function" => isset($caller_source["function"]) ? $caller_source["function"] : null,
+                "line" => isset($caller["line"]) ? $caller["line"] : null
+            ]
         ];
         if (is_array($data)) {
             foreach ($data as $key => $value) {
@@ -288,35 +294,37 @@ trait CommonTraits
      *
      * @param array|Request $input_data request data or array
      * @param array $return_data response array
-     * @param Exception $error exception
+     * @param Throwable $error response array
      * @return void
      */
-    public function recordResponse($input_data, $return_data, $error = null)
+    /** */
+    public function recordResponse($input_data, $return_data, Throwable $error = null)
     {
-        $back_trace = debug_backtrace();
-        $caller = array_shift($back_trace);
-        $caller_source = array_shift($back_trace);
+        if (is_array($return_data)) {
+            $line = isset($return_data["file"]["line"]) ? $return_data["file"]["line"] : null;
+            $class = isset($return_data["file"]["class"]) ? $return_data["file"]["class"] : null;
+            $function = isset($return_data["file"]["function"]) ? $return_data["file"]["function"] : null;
+            unset($return_data["file"]);
+        } else {
+            $class = null;
+            $function = null;
+            $line = null;
+        }
         $parameter = is_array($input_data) ? $input_data : $input_data->all();
-        $line = isset($caller["line"]) ? $caller["line"] : null;
-        $class = isset($caller["class"]) ? $caller["class"] : null;
-        $function_name = isset($caller_source["function"]) ? $caller_source["function"] : null;
         if (isset($parameter["event_uuid"])) {
             $this->event_uuid = $parameter["event_uuid"];
             unset($parameter["event_uuid"]);
         }
-        if ($this->event_uuid === null) {
-            $this->event_uuid = $this->genUuid();
-        }
         $data_array =
             [
                 "File" => $class,
-                "Function" => $function_name,
-                "Receive" => $parameter,
+                "Function" => $function,
+                // "Receive" => $parameter,
                 "Response" => $return_data,
                 "Line" => $line,
                 "User" => $this->getCurrentUserUuid(),
             ];
-        if ($error != null) {
+        if ($error !== null) {
             $data_array["Exception"] =  $error->getMessage() . " at line: " . $error->getLine();
         }
         Log::info(
