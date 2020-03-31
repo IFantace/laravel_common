@@ -4,7 +4,7 @@
  * @Author: Austin
  * @Date: 2020-01-09 18:18:25
  * @LastEditors  : Austin
- * @LastEditTime : 2020-03-31 16:25:39
+ * @LastEditTime : 2020-03-31 17:44:35
  */
 
 namespace Ifantace\Common\Http\Services;
@@ -20,14 +20,14 @@ class CommonService
     /**
      * request from route
      *
-     * @var Illuminate\Http\Request
+     * @var Request
      */
     protected $input;
 
     /**
      * custom response object
      *
-     * @var Ifantace\Common\Objects\Response
+     * @var Response
      */
     protected $response;
 
