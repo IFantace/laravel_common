@@ -4,7 +4,7 @@
  * @Author       : Austin
  * @Date         : 2020-03-25 17:09:18
  * @LastEditors  : Austin
- * @LastEditTime : 2020-03-31 17:43:26
+ * @LastEditTime : 2020-03-31 17:51:50
  * @Description  : {{Description this}}
  */
 
@@ -38,6 +38,13 @@ class Response
      * @var string
      */
     private $ui_message;
+
+    /**
+     * file
+     *
+     * @var string
+     */
+    private $file;
 
     /**
      * class
