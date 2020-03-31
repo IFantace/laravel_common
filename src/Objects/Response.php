@@ -4,7 +4,7 @@
  * @Author       : Austin
  * @Date         : 2020-03-25 17:09:18
  * @LastEditors  : Austin
- * @LastEditTime : 2020-03-31 17:27:01
+ * @LastEditTime : 2020-03-31 17:30:18
  * @Description  : {{Description this}}
  */
 
@@ -266,7 +266,7 @@ class Response
      * get response array as return
      *
      * @param boolean $need_record record response at the same time
-     * @return void
+     * @return array
      */
     public function getResponseArray(bool $need_record = false)
     {
