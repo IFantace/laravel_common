@@ -12,8 +12,6 @@ use Throwable;
 
 trait CommonTraits
 {
-    protected $event_uuid;
-
     /**
      * Download log file in storage.
      *
@@ -106,93 +104,13 @@ trait CommonTraits
         return json_encode($array, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
     }
 
-    public function createLogString(string $event, array $data)
+    public function createLogString(string $event, array $data, string $event_uuid)
     {
-        if ($this->event_uuid === null) {
-            $this->event_uuid = $this->genUuid();
-        }
         return $this->jsonEncodeUnescaped([
             "EVENT-NAME" => $event,
             "EVENT-CONTENT" => $data,
-            "EVENT-UUID" => $this->event_uuid
+            "EVENT-UUID" => $event_uuid
         ]);
-    }
-
-    /**
-     * Send request which type is post.
-     *
-     * @param string $url Url.
-     * @param array $data Post data.
-     * @param array $header Headers.
-     * @return array|string
-     */
-    public function sendCurlPostJSON(
-        string $url,
-        array $data,
-        array $header = [
-            'Content-Type: application/json'
-        ],
-        array $options = [
-            CURLOPT_SSL_VERIFYPEER => false,
-            CURLOPT_SSL_VERIFYHOST => false,
-            CURLOPT_CONNECTTIMEOUT => 0,
-            CURLOPT_TIMEOUT => 15
-        ]
-    ) {
-        if ($this->event_uuid === null) {
-            $this->event_uuid = $this->genUuid();
-        }
-        $request_id = $this->generateRandomKey(8);
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $this->jsonEncodeUnescaped($data));
-        foreach ($options as $key => $value) {
-            curl_setopt($ch, $key, $value);
-        }
-        Log::info(
-            $this->createLogString(
-                "Curl-Send",
-                [
-                    "Url" => $url,
-                    "Header" => $header,
-                    "Body" => $this->jsonEncodeUnescaped($data),
-                    "Option" => $options,
-                    "RequestId" => $request_id
-                ],
-            )
-        );
-        $output = curl_exec($ch);
-        $status_code = curl_errno($ch);
-        Log::info(
-            $this->createLogString(
-                "Curl-Receive",
-                [
-                    "StatusCode" => $status_code,
-                    "ResponseBody" => $status_code == 0 ? $output : null,
-                    "RequestId" => $request_id
-                ],
-            )
-        );
-        if ($status_code == 0) {
-            curl_close($ch);
-            return $output;
-        } else {
-            $error = curl_error($ch);
-            Log::warning(
-                $this->createLogString(
-                    "Curl-Error",
-                    [
-                        "ErrorMessage" => $error,
-                        "RequestId" => $request_id
-                    ],
-                )
-            );
-            curl_close($ch);
-            return $error;
-        }
     }
 
     /**
@@ -249,102 +167,5 @@ trait CommonTraits
         } else {
             return null;
         }
-    }
-
-    /**
-     * generate response array
-     *
-     * @param integer $status Status_code: > 0 = success, < 0 = failed.
-     * @param string $message Message for developer.
-     * @param string $ui_message Message for user.
-     * @param array $data  Apply data.
-     * @return array
-     */
-    public function generateResponseArray(
-        int $status,
-        string $message,
-        string $ui_message,
-        array $data = []
-    ) {
-        $back_trace = debug_backtrace();
-        $caller = array_shift($back_trace);
-        $caller_source = array_shift($back_trace);
-        $responseArray = [
-            "status" => $status,
-            "message" => $message,
-            "ui_message" => $ui_message,
-            "uuid" => $this->event_uuid,
-            "file" => [
-                "class" => isset($caller["class"]) ? $caller["class"] : null,
-                "function" => isset($caller_source["function"]) ? $caller_source["function"] : null,
-                "line" => isset($caller["line"]) ? $caller["line"] : null
-            ]
-        ];
-        if (is_array($data)) {
-            foreach ($data as $key => $value) {
-                $responseArray[$key] = $value;
-            }
-        }
-        ksort($responseArray);
-        return $responseArray;
-    }
-
-    /**
-     * record this time response.
-     *
-     * @param array|Request $input_data request data or array
-     * @param array $return_data response array
-     * @param Throwable $error response array
-     * @return void
-     */
-    /** */
-    public function recordResponse($input_data, $return_data, Throwable $error = null)
-    {
-        if (is_array($return_data)) {
-            $line = isset($return_data["file"]["line"]) ? $return_data["file"]["line"] : null;
-            $class = isset($return_data["file"]["class"]) ? $return_data["file"]["class"] : null;
-            $function = isset($return_data["file"]["function"]) ? $return_data["file"]["function"] : null;
-            unset($return_data["file"]);
-        } else {
-            $class = null;
-            $function = null;
-            $line = null;
-        }
-        $parameter = is_array($input_data) ? $input_data : $input_data->all();
-        if (isset($parameter["event_uuid"])) {
-            $this->event_uuid = $parameter["event_uuid"];
-            unset($parameter["event_uuid"]);
-        }
-        $data_array =
-            [
-                "File" => $class,
-                "Function" => $function,
-                // "Receive" => $parameter,
-                "Response" => $return_data,
-                "Line" => $line,
-                "User" => $this->getCurrentUserUuid(),
-            ];
-        if ($error !== null) {
-            $data_array["Exception"] =  $error->getMessage() . " at line: " . $error->getLine();
-        }
-        Log::info(
-            $this->createLogString(
-                "Request-Response",
-                $data_array,
-            )
-        );
-    }
-
-    /**
-     * 用於中斷程式
-     *
-     * @param [type] $response_array
-     * @return void
-     */
-    public function throwResponseException($response_array)
-    {
-        $this_exception = new ResponseException($response_array["message"]);
-        $this_exception->setResponse($response_array);
-        throw $this_exception;
     }
 }

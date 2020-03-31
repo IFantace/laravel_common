@@ -26,6 +26,11 @@ class CommonRepository
     {
         return $this->model->get();
     }
+    public function select(array $columns)
+    {
+        $this->model = $this->model->select($columns);
+        return $this;
+    }
     public function pluck($column)
     {
         return $this->model->pluck($column);
@@ -53,11 +58,6 @@ class CommonRepository
     public function updateOrCreate(array $query_condition, array $data_array)
     {
         return $this->model->updateOrCreate($query_condition, $data_array);
-    }
-    public function select(array $columns)
-    {
-        $this->model = $this->model->select($columns);
-        return $this;
     }
     public function searchAllColumn(
         array $parameter,

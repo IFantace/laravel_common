@@ -4,7 +4,7 @@
  * @Author: Austin
  * @Date: 2019-12-27 17:49:13
  * @LastEditors  : Austin
- * @LastEditTime : 2020-03-27 15:34:15
+ * @LastEditTime : 2020-03-31 16:08:31
  */
 
 namespace Ifantace\Common\Objects;
@@ -37,9 +37,9 @@ abstract class CommonObject
     /**
      * 初始化，如果有primary key，則搜尋並設定data
      *
-     * @param [type] $primary_key
+     * @param string $primary_key
      */
-    public function __construct($primary_key = null)
+    public function __construct(string $primary_key = null)
     {
         $this->initColumn();
         $this->setCreator();
@@ -57,10 +57,10 @@ abstract class CommonObject
     /**
      * 透過primary key，則搜尋並設定data
      *
-     * @param [type] $primary_key
+     * @param string $primary_key
      * @return void
      */
-    public function setDataByPrimary($primary_key)
+    public function setDataByPrimary(string $primary_key)
     {
         $data = $this->findDataByPrimary($primary_key);
         if ($data !== null) {

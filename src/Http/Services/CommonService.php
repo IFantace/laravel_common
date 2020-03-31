@@ -4,33 +4,43 @@
  * @Author: Austin
  * @Date: 2020-01-09 18:18:25
  * @LastEditors  : Austin
- * @LastEditTime : 2020-03-27 15:53:03
+ * @LastEditTime : 2020-03-31 16:25:39
  */
 
 namespace Ifantace\Common\Http\Services;
 
 use Ifantace\Common\CommonTraits;
+use Ifantace\Common\Objects\Response;
 use Illuminate\Http\Request;
 
 class CommonService
 {
     use CommonTraits;
 
+    /**
+     * request from route
+     *
+     * @var Illuminate\Http\Request
+     */
     protected $input;
-    protected $response_array;
 
     /**
-     * Service初始化input
+     * custom response object
+     *
+     * @var Ifantace\Common\Objects\Response
+     */
+    protected $response;
+
+    /**
+     * Service初始化
      *
      * @param Request $input
      * @return void
      */
-    public function initInput(Request $input)
+    public function init(Request &$input, Response &$response)
     {
         $this->input = $input;
-        if ($input->has("event_uuid") && $this->event_uuid === null) {
-            $this->event_uuid = $input->get("event_uuid");
-        }
+        $this->response = $response;
     }
 
     /**
@@ -44,11 +54,6 @@ class CommonService
      */
     public function setResponseArray(int $status, string $message, string $ui_message, array $data = [])
     {
-        $this->response_array = $this->generateResponseArray(
-            $status,
-            $message,
-            $ui_message,
-            $data
-        );
+        $this->response->setStatus($status)->setMessage($message)->setUIMessage($ui_message)->setData($data);
     }
 }
