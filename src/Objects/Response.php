@@ -4,7 +4,7 @@
  * @Author       : Austin
  * @Date         : 2020-03-25 17:09:18
  * @LastEditors  : Austin
- * @LastEditTime : 2020-03-31 17:06:43
+ * @LastEditTime : 2020-03-31 17:13:59
  * @Description  : {{Description this}}
  */
 
@@ -123,6 +123,22 @@ class Response
     public function setUIMessage(string $ui_message)
     {
         $this->ui_message = $ui_message;
+        return $this;
+    }
+
+    /**
+     * 批次設定必要值
+     *
+     * @param integer $status
+     * @param string $message
+     * @param string $ui_message
+     * @return Response
+     */
+    public function setCommon(int $status, string $message, string $ui_message)
+    {
+        $this->setStatus($status);
+        $this->setMessage($message);
+        $this->setUIMessage($ui_message);
         return $this;
     }
 
