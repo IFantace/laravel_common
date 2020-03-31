@@ -4,7 +4,7 @@
  * @Author       : Austin
  * @Date         : 2020-03-25 17:09:18
  * @LastEditors  : Austin
- * @LastEditTime : 2020-03-31 17:13:59
+ * @LastEditTime : 2020-03-31 17:27:01
  * @Description  : {{Description this}}
  */
 
@@ -159,14 +159,27 @@ class Response
      *
      * @return Response
      */
-    public function setFile()
+    public function setBacktrace()
     {
         $back_trace = debug_backtrace();
         $caller = array_shift($back_trace);
         $caller_source = array_shift($back_trace);
+        $this->setFile(isset($caller["file"]) ? $caller["file"] : null);
         $this->setClass(isset($caller["class"]) ? $caller["class"] : null);
         $this->setLine(isset($caller["line"]) ? $caller["line"] : null);
         $this->setFunction(isset($caller_source["function"]) ? $caller_source["function"] : null);
+        return $this;
+    }
+
+    /**
+     * 設定回應的file
+     *
+     * @param string $file 回應的file
+     * @return Response
+     */
+    public function setFile(string $file)
+    {
+        $this->file = $file;
         return $this;
     }
 
@@ -230,7 +243,8 @@ class Response
             "message" => $this->message,
             "ui_message" => $this->ui_message,
             "uuid" => $this->event_uuid,
-            "file" => [
+            "backtrace" => [
+                "file" => $this->file,
                 "class" => $this->class,
                 "function" => $this->function,
                 "line" => $this->line
@@ -260,7 +274,8 @@ class Response
         if ($need_record) {
             $this->recordResponse($response_array);
         }
-        unset($response_array["file"]);
+        unset($response_array["backtrace"]);
+        unset($response_array["error"]);
         return $response_array;
     }
 
