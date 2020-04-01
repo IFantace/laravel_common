@@ -110,7 +110,7 @@ trait CommonTraits
             "EVENT-NAME" => $event,
             "EVENT-CONTENT" => $data,
             "EVENT-UUID" => $event_uuid
-        ]);
+        ]) . PHP_EOL;
     }
 
     /**

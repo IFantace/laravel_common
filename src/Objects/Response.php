@@ -4,7 +4,7 @@
  * @Author       : Austin
  * @Date         : 2020-03-25 17:09:18
  * @LastEditors  : Austin
- * @LastEditTime : 2020-03-31 17:51:50
+ * @LastEditTime : 2020-04-01 11:38:16
  * @Description  : {{Description this}}
  */
 
@@ -263,7 +263,11 @@ class Response
             }
         }
         if (isset($this->error)) {
-            $response_array["error"] = $this->error->getMessage();
+            $response_array["error"] = [
+                "file" => $this->error->getFile(),
+                "line" => $this->error->getLine(),
+                "message" => $this->error->getMessage(),
+            ];
         }
         ksort($response_array);
         return $response_array;
