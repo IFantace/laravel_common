@@ -47,6 +47,17 @@ class CommonRepository
     {
         return $this->model->update($update_data);
     }
+    public function saveLikeUpdate(array $update_data)
+    {
+        $data = $this->model->first();
+        if ($data === null) {
+            return false;
+        }
+        foreach ($update_data as $each_key => $each_value) {
+            $data->$each_key = $each_value;
+        }
+        return $data->save();
+    }
     public function create(array $create_data)
     {
         return $this->model->create($create_data);
