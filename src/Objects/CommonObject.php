@@ -4,7 +4,7 @@
  * @Author: Austin
  * @Date: 2019-12-27 17:49:13
  * @LastEditors  : Austin
- * @LastEditTime : 2020-03-31 16:08:31
+ * @LastEditTime : 2020-04-10 16:33:48
  */
 
 namespace Ifantace\Common\Objects;
@@ -50,9 +50,6 @@ abstract class CommonObject
     public function setCreator()
     {
         $this->creator = Auth::user();
-        // if ($this->creator !== null) {
-        //     $this->creator_uuid = $this->creator->uuid;
-        // }
     }
     /**
      * 透過primary key，則搜尋並設定data
@@ -78,13 +75,11 @@ abstract class CommonObject
         $this_column = $column === null ? $this->settable_column : $column;
         foreach ($this_column as $each_column) {
             if (is_array($data)) {
-                if (isset($data[$each_column])) {
+                if (array_key_exists($each_column, $data)) {
                     $this->$each_column = $data[$each_column];
                 }
             } else {
-                if (isset($data->$each_column)) {
-                    $this->$each_column = $data->$each_column;
-                }
+                $this->$each_column = $data->$each_column;
             }
         }
         $this->initSystemData();
@@ -100,9 +95,7 @@ abstract class CommonObject
     {
         $return_array = [];
         foreach ($columns as $each_column) {
-            if (isset($this->$each_column)) {
-                $return_array[$each_column] = $this->$each_column;
-            }
+            $return_array[$each_column] = isset($this->$each_column) ? $this->$each_column : null;
         }
         return $return_array;
     }
