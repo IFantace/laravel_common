@@ -62,6 +62,13 @@ class CommonRepository
     {
         return $this->model->create($create_data);
     }
+    public function saveLikeCreate(array $create_data)
+    {
+        foreach ($create_data as $each_key => $each_value) {
+            $this->model->$each_key = $each_value;
+        }
+        return $this->model->save();
+    }
     public function firstOrCreate(array $first_data, array $create_data)
     {
         return $this->model->firstOrCreate($first_data, $create_data);

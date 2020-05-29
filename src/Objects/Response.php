@@ -243,7 +243,7 @@ class Response
      *
      * @return array
      */
-    private function createResponseArray(): array
+    private function createResponseArray()
     {
         $response_array = [
             "status" => $this->status,

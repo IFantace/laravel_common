@@ -4,7 +4,7 @@
  * @Author: Austin
  * @Date: 2019-12-27 17:49:13
  * @LastEditors  : Austin
- * @LastEditTime : 2020-04-10 16:33:48
+ * @LastEditTime : 2020-05-12 10:36:33
  */
 
 namespace Ifantace\Common\Objects;
@@ -142,7 +142,7 @@ abstract class CommonObject
      * @param string $column_name
      * @return array
      */
-    public function getColumn(string $column_name = "all_column"): array
+    public function getColumn(string $column_name = "all_column")
     {
         return $this->$column_name;
     }
