@@ -2,62 +2,136 @@
 
 namespace Ifantace\Common\Http\Repositories;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Schema;
 
-class CommonRepository
+abstract class CommonRepository
 {
+    /**
+     * this repository model
+     *
+     * @var Model
+     */
     protected $model;
+
+    /**
+     * 使用的connection
+     *
+     * @var string
+     */
     protected $connection_name;
+
+    /**
+     * 使用的table
+     *
+     * @var string
+     */
     protected $table_name;
+
+    /**
+     * 使用的model之columns
+     *
+     * @var array
+     */
     protected $columns;
 
-    public function __construct($model)
+    public function __construct(Model $model)
     {
         $this->model = $model;
         $this->connection_name = $this->model->getConnectionName();
         $this->table_name = $this->model->getTable();
         $this->columns = Schema::connection($this->connection_name)->getColumnListing($this->table_name);
     }
+
+    /**
+     * 取得當前model
+     *
+     * @return \Illuminate\Database\Eloquent\Model
+     */
+    public function getModel(): Model
+    {
+        return $this->model;
+    }
+
+    /**
+     * 設定當前model
+     *
+     * @return \Illuminate\Database\Eloquent\Model
+     */
+    public function setModel(Model $model)
+    {
+        $this->model = $model;
+    }
+
+    /**
+     * first
+     *
+     * @return mixed
+     */
     public function first()
     {
         return $this->model->first();
     }
+
+    /**
+     * get
+     *
+     * @return mixed
+     */
     public function get()
     {
         return $this->model->get();
     }
+
+    /**
+     * select
+     *
+     * @param array $columns
+     * @return mixed
+     */
     public function select(array $columns)
     {
         $this->model = $this->model->select($columns);
         return $this;
     }
+
+    /**
+     * pluck
+     *
+     * @param string $column
+     * @return Coll
+     */
     public function pluck($column)
     {
         return $this->model->pluck($column);
     }
+
+    /**
+     * delete
+     *
+     * @return bool
+     */
     public function delete()
     {
         return $this->model->delete();
     }
+
+    /**
+     * count
+     *
+     * @return int
+     */
     public function count()
     {
         return $this->model->count();
     }
-    public function update(array $update_data)
-    {
-        return $this->model->update($update_data);
-    }
-    public function saveLikeUpdate(array $update_data)
-    {
-        $data = $this->model->first();
-        if ($data === null) {
-            return false;
-        }
-        foreach ($update_data as $each_key => $each_value) {
-            $data->$each_key = $each_value;
-        }
-        return $data->save();
-    }
+
+    /**
+     * Undocumented function
+     *
+     * @param array $create_data
+     * @return mixed
+     */
     public function create(array $create_data)
     {
         return $this->model->create($create_data);
@@ -69,6 +143,36 @@ class CommonRepository
         }
         return $this->model->save();
     }
+
+    /**
+     * update
+     *
+     * @param array $update_data
+     * @return bool
+     */
+    public function update(array $update_data)
+    {
+        return $this->model->update($update_data);
+    }
+
+    /**
+     * use save to update
+     *
+     * @param array $update_data
+     * @return bool
+     */
+    public function saveLikeUpdate(array $update_data)
+    {
+        $data = $this->model->first();
+        if ($data === null) {
+            return false;
+        }
+        foreach ($update_data as $each_key => $each_value) {
+            $data->$each_key = $each_value;
+        }
+        return $data->save();
+    }
+
     public function firstOrCreate(array $first_data, array $create_data)
     {
         return $this->model->firstOrCreate($first_data, $create_data);

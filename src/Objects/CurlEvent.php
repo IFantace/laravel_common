@@ -4,7 +4,7 @@
  * @Author       : Austin
  * @Date         : 2020-03-25 17:09:18
  * @LastEditors  : Austin
- * @LastEditTime : 2020-03-31 15:48:53
+ * @LastEditTime : 2020-06-04 17:30:53
  * @Description  : {{Description this}}
  */
 
@@ -18,7 +18,7 @@ class CurlEvent
     use CommonTraits;
 
     /**
-     * message
+     * the uuid of this event
      *
      * @var string
      */
@@ -43,8 +43,6 @@ class CurlEvent
             'Content-Type: application/json'
         ],
         array $options = [
-            CURLOPT_SSL_VERIFYPEER => false,
-            CURLOPT_SSL_VERIFYHOST => false,
             CURLOPT_CONNECTTIMEOUT => 0,
             CURLOPT_TIMEOUT => 15
         ]

@@ -4,7 +4,7 @@
  * @Author: Austin
  * @Date: 2020-01-09 18:18:25
  * @LastEditors  : Austin
- * @LastEditTime : 2020-02-05 20:06:59
+ * @LastEditTime : 2020-06-30 18:25:55
  */
 
 namespace Ifantace\Common\Http\Controllers;
@@ -12,10 +12,23 @@ namespace Ifantace\Common\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Ifantace\Common\CommonTraits;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Response;
 
 class CommonController extends Controller
 {
     use CommonTraits;
+
+    /**
+     * input
+     *
+     * @var Request
+     */
+    private $input;
+
+    public function __construct(Request $input)
+    {
+        $this->input = $input;
+    }
 
     /**
      * Display a listing of the resource.
@@ -28,14 +41,22 @@ class CommonController extends Controller
         //Common $this->loadViewsFrom(__DIR__ . '/resources/views', 'Common');
         return view('Common::welcome', compact('message'));
     }
-    public function download(Request $input, $type)
+
+
+    /**
+     * 下載指定的資料
+     *
+     * @param string $type 類型
+     * @return mixed
+     */
+    public function download(string $type)
     {
         switch ($type) {
             case "log":
-                if (!$input->has("path") || !$input->has("token")) {
+                if (!$this->input->has("path") || !$this->input->has("token")) {
                     return "error";
                 }
-                return $this->downloadLog($input->get("path"), $input->get("token"));
+                return $this->downloadLog($this->input->get("path"), $this->input->get("token"));
                 break;
             default:
                 break;
