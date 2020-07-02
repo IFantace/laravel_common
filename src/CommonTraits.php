@@ -21,7 +21,7 @@ trait CommonTraits
      */
     public function downloadLog($path, $token)
     {
-        if (strcmp(config("common." . config("app.env") . ".token_log"), $token) == 0) {
+        if (strcmp(config("ifantace.common." . config("app.env") . ".token_log"), $token) == 0) {
             $headers = array(
                 'Content-Type: application/txt',
             );

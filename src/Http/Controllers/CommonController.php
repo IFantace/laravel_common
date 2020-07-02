@@ -4,7 +4,7 @@
  * @Author: Austin
  * @Date: 2020-01-09 18:18:25
  * @LastEditors  : Austin
- * @LastEditTime : 2020-06-30 18:25:55
+ * @LastEditTime : 2020-07-02 18:00:44
  */
 
 namespace Ifantace\Common\Http\Controllers;
@@ -44,9 +44,9 @@ class CommonController extends Controller
 
 
     /**
-     * 下載指定的資料
+     * download file
      *
-     * @param string $type 類型
+     * @param string $type download type
      * @return mixed
      */
     public function download(string $type)

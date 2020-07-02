@@ -4,7 +4,7 @@
  * @Author: Austin
  * @Date: 2019-12-27 17:49:13
  * @LastEditors  : Austin
- * @LastEditTime : 2020-05-12 10:36:33
+ * @LastEditTime : 2020-07-02 18:14:38
  */
 
 namespace Ifantace\Common\Objects;
@@ -47,12 +47,19 @@ abstract class CommonObject
             $this->setDataByPrimary($primary_key);
         }
     }
-    public function setCreator()
+
+    /**
+     * set creator
+     *
+     * @return void
+     */
+    protected function setCreator()
     {
         $this->creator = Auth::user();
     }
+
     /**
-     * 透過primary key，則搜尋並設定data
+     * search and set this object by primary key.
      *
      * @param string $primary_key
      * @return void
@@ -62,17 +69,20 @@ abstract class CommonObject
         $data = $this->findDataByPrimary($primary_key);
         if ($data !== null) {
             $this->setData($data, $this->all_column);
+            $this->initSystemData();
         }
     }
+
     /**
-     * 設定data
+     * set data
      *
-     * @param [type] $data
+     * @param array $data
+     * @param array $columns
      * @return void
      */
-    public function setData($data, $column = null)
+    public function setData($data, $columns = null)
     {
-        $this_column = $column === null ? $this->settable_column : $column;
+        $this_column = ($columns === null ? $this->settable_column : $columns);
         foreach ($this_column as $each_column) {
             if (is_array($data)) {
                 if (array_key_exists($each_column, $data)) {
@@ -82,16 +92,16 @@ abstract class CommonObject
                 $this->$each_column = $data->$each_column;
             }
         }
-        $this->initSystemData();
         return $this;
     }
+
     /**
      * 透過指定的欄位產生array
      *
-     * @param [type] $columns
+     * @param array $columns
      * @return array
      */
-    protected function filterByColumn($columns)
+    public function filterByColumn(array $columns)
     {
         $return_array = [];
         foreach ($columns as $each_column) {
@@ -99,6 +109,7 @@ abstract class CommonObject
         }
         return $return_array;
     }
+
     /**
      * 透過可全部的欄位過濾資料
      *
@@ -108,6 +119,7 @@ abstract class CommonObject
     {
         return $this->filterByColumn($this->all_column);
     }
+
     /**
      * 透過可新增的欄位過濾資料
      *
@@ -117,6 +129,7 @@ abstract class CommonObject
     {
         return $this->filterByColumn($this->fillable_column);
     }
+
     /**
      * 透過可設定的欄位過濾資料
      *
@@ -126,6 +139,7 @@ abstract class CommonObject
     {
         return $this->filterByColumn($this->settable_column);
     }
+
     /**
      * 透過設定的可更新的欄位過濾資料
      *
@@ -146,49 +160,58 @@ abstract class CommonObject
     {
         return $this->$column_name;
     }
+
     public function isDuplicate()
     {
         return $this->findDuplicate() !== null;
     }
+
     /**
      * 初始化Object可用欄位
      *
      * @return void
      */
     abstract public function initColumn();
+
     /**
      * 初始化由系統指定的參數
      *
      * @return void
      */
     abstract public function initSystemData();
+
     /**
      * 建立資料
      *
      * @return void
      */
     abstract public function create();
+
     /**
      * 更新資料
      *
      * @return void
      */
     abstract public function update();
+
     /**
      * 刪除資料
      *
      * @return void
      */
     abstract public function delete();
+
     /**
      * 搜尋重複unique欄位的資料
      *
      * @return void
      */
     abstract public function findDuplicate();
+
     /**
      * 搜尋指定的Primary的資料
      *
+     * @param mixed $primary_key
      * @return void
      */
     abstract public function findDataByPrimary($primary_key);

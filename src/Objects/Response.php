@@ -4,7 +4,7 @@
  * @Author       : Austin
  * @Date         : 2020-03-25 17:09:18
  * @LastEditors  : Austin
- * @LastEditTime : 2020-04-01 11:38:16
+ * @LastEditTime : 2020-07-02 18:21:46
  * @Description  : {{Description this}}
  */
 
@@ -101,8 +101,8 @@ class Response
     /**
      * 設定回應的status
      *
-     * @param integer $status 目前設計，> 0: success, -1: 參數錯誤 -2:驗證錯誤 -3:執行錯誤 -4:非預期的錯誤
-     * @return Response
+     * @param int $status 目前設計，> 0: success, -1: 參數錯誤 -2:驗證錯誤 -3:執行錯誤 -4:非預期的錯誤
+     * @return \Ifantace\Common\Objects\Response
      */
     public function setStatus(int $status)
     {
@@ -114,7 +114,7 @@ class Response
      * 設定回應的message
      *
      * @param string $message RD看的message
-     * @return Response
+     * @return \Ifantace\Common\Objects\Response
      */
     public function setMessage(string $message)
     {
@@ -125,7 +125,7 @@ class Response
      * 設定回應的ui_message
      *
      * @param string $ui_message 使用者看的ui_message
-     * @return Response
+     * @return \Ifantace\Common\Objects\Response
      */
     public function setUIMessage(string $ui_message)
     {
@@ -136,10 +136,10 @@ class Response
     /**
      * 批次設定必要值
      *
-     * @param integer $status
+     * @param int $status
      * @param string $message
      * @param string $ui_message
-     * @return Response
+     * @return \Ifantace\Common\Objects\Response
      */
     public function setCommon(int $status, string $message, string $ui_message)
     {
@@ -153,7 +153,7 @@ class Response
      * 設定response夾帶的data
      *
      * @param array $data key=>value形式
-     * @return Response
+     * @return \Ifantace\Common\Objects\Response
      */
     public function setData(array $data)
     {
@@ -164,7 +164,7 @@ class Response
     /**
      * 設定此回應的系統資料
      *
-     * @return Response
+     * @return \Ifantace\Common\Objects\Response
      */
     public function setBacktrace()
     {
@@ -182,7 +182,7 @@ class Response
      * 設定回應的file
      *
      * @param string $file 回應的file
-     * @return Response
+     * @return \Ifantace\Common\Objects\Response
      */
     public function setFile(string $file)
     {
@@ -194,7 +194,7 @@ class Response
      * 設定回應的class
      *
      * @param string $class 回應的class
-     * @return Response
+     * @return \Ifantace\Common\Objects\Response
      */
     public function setClass(string $class)
     {
@@ -206,7 +206,7 @@ class Response
      * 設定此回應所在的function
      *
      * @param string $function function名稱
-     * @return Response
+     * @return \Ifantace\Common\Objects\Response
      */
     public function setFunction(string $function)
     {
@@ -217,8 +217,8 @@ class Response
     /**
      * 設定此回應所在的行數
      *
-     * @param integer $line 行數
-     * @return Response
+     * @param int $line 行數
+     * @return \Ifantace\Common\Objects\Response
      */
     public function setLine(int $line)
     {
@@ -230,7 +230,7 @@ class Response
      * 發生意外狀況時，所夾帶的Exception檔案
      *
      * @param Throwable $error
-     * @return Response
+     * @return \Ifantace\Common\Objects\Response
      */
     public function setError(Throwable $error)
     {

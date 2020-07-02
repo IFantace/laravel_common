@@ -15,36 +15,50 @@ abstract class CommonRepository
     protected $model;
 
     /**
-     * 使用的connection
+     * model connection
      *
      * @var string
      */
     protected $connection_name;
 
     /**
-     * 使用的table
+     * model table
      *
      * @var string
      */
     protected $table_name;
 
     /**
-     * 使用的model之columns
+     * table columns
      *
      * @var array
      */
     protected $columns;
 
+    /**
+     * construct
+     *
+     * @param Model $model model
+     */
     public function __construct(Model $model)
     {
-        $this->model = $model;
+        $this->setModel($model);
+    }
+
+    /**
+     * init repository
+     *
+     * @return void
+     */
+    protected function init()
+    {
         $this->connection_name = $this->model->getConnectionName();
         $this->table_name = $this->model->getTable();
         $this->columns = Schema::connection($this->connection_name)->getColumnListing($this->table_name);
     }
 
     /**
-     * 取得當前model
+     * return current model
      *
      * @return \Illuminate\Database\Eloquent\Model
      */
@@ -54,193 +68,109 @@ abstract class CommonRepository
     }
 
     /**
-     * 設定當前model
+     * set model
      *
-     * @return \Illuminate\Database\Eloquent\Model
+     * @param Model $model model
+     * @return static
      */
     public function setModel(Model $model)
     {
         $this->model = $model;
-    }
-
-    /**
-     * first
-     *
-     * @return mixed
-     */
-    public function first()
-    {
-        return $this->model->first();
-    }
-
-    /**
-     * get
-     *
-     * @return mixed
-     */
-    public function get()
-    {
-        return $this->model->get();
-    }
-
-    /**
-     * select
-     *
-     * @param array $columns
-     * @return mixed
-     */
-    public function select(array $columns)
-    {
-        $this->model = $this->model->select($columns);
+        $this->init();
         return $this;
     }
 
     /**
-     * pluck
+     * run function by string
      *
-     * @param string $column
-     * @return Coll
-     */
-    public function pluck($column)
-    {
-        return $this->model->pluck($column);
-    }
-
-    /**
-     * delete
-     *
-     * @return bool
-     */
-    public function delete()
-    {
-        return $this->model->delete();
-    }
-
-    /**
-     * count
-     *
-     * @return int
-     */
-    public function count()
-    {
-        return $this->model->count();
-    }
-
-    /**
-     * Undocumented function
-     *
-     * @param array $create_data
+     * @param string $function_name function name
      * @return mixed
      */
-    public function create(array $create_data)
+    public function modelRunFunction(string $function_name)
     {
-        return $this->model->create($create_data);
-    }
-    public function saveLikeCreate(array $create_data)
-    {
-        foreach ($create_data as $each_key => $each_value) {
-            $this->model->$each_key = $each_value;
-        }
-        return $this->model->save();
+        return $this->model->$function_name();
     }
 
     /**
-     * update
+     * search table
      *
-     * @param array $update_data
-     * @return bool
+     * @param string $query_string
+     * @param array $columns_not_search just array eq.["A","B","C"]
+     * @param array $columns_change_search two-dimensional array
+     * eq. ["A"=> ["1" => "正常","0" => "關閉中","-1" => "申請中","-2" => "拒絕申請",]]
+     * @param array $special_column two-dimensional array
+     * eq. ["A"=> ["1", "0", "-1", "-2"]]
+     * @return static
      */
-    public function update(array $update_data)
-    {
-        return $this->model->update($update_data);
-    }
-
-    /**
-     * use save to update
-     *
-     * @param array $update_data
-     * @return bool
-     */
-    public function saveLikeUpdate(array $update_data)
-    {
-        $data = $this->model->first();
-        if ($data === null) {
-            return false;
-        }
-        foreach ($update_data as $each_key => $each_value) {
-            $data->$each_key = $each_value;
-        }
-        return $data->save();
-    }
-
-    public function firstOrCreate(array $first_data, array $create_data)
-    {
-        return $this->model->firstOrCreate($first_data, $create_data);
-    }
-    public function updateOrCreate(array $query_condition, array $data_array)
-    {
-        return $this->model->updateOrCreate($query_condition, $data_array);
-    }
     public function searchAllColumn(
-        array $parameter,
+        string $query_string,
         array $columns_not_search = array(),
         array $columns_change_search = array(),
-        array $special_column = array()
+        array $columns_whereIn = array()
     ) {
-        if (isset($parameter['query'])) {
-            $query_string = $parameter['query'];
-            $columns_not_search = array_merge($columns_not_search, array_keys($columns_change_search));
-            $columns = array_values(array_diff($this->columns, $columns_not_search));
-            if (preg_match('/[^A-Za-z0-9: ]/', $query_string)) {
-                $columns = array_values(array_diff($columns, ["created_at", "updated_at", "deleted_at"]));
-            }
-            $this->model = $this->model->where(
-                function ($query_all_column) use ($columns, $query_string, $columns_change_search, $special_column) {
-                    foreach ($columns as $each_column) {
-                        $query_all_column->orWhere($each_column, 'like', '%' . $query_string . '%');
-                    }
-                    foreach ($special_column as $column_name => $value_array) {
-                        $query_all_column->orWhereIn($column_name, $value_array);
-                    }
-                    foreach ($columns_change_search as $search_column_name => $change_key_array) {
-                        foreach ($change_key_array as $inside_value => $outer_value) {
-                            if (strpos($outer_value, $query_string) !== false) {
-                                $query_all_column->orWhere($search_column_name, 'like', '%' . $inside_value . '%');
-                            }
+        $columns_not_search = array_merge($columns_not_search, array_keys($columns_change_search));
+        $columns = array_values(array_diff($this->columns, $columns_not_search));
+        $columns = array_values(array_diff($columns, ["created_at", "updated_at", "deleted_at"]));
+        $this->model = $this->model->where(
+            function ($query_all_column) use ($columns, $query_string, $columns_change_search, $columns_whereIn) {
+                foreach ($columns as $each_column) {
+                    $query_all_column->orWhere($each_column, 'like', '%' . $query_string . '%');
+                }
+                foreach ($columns_whereIn as $column_name => $value_array) {
+                    $query_all_column->orWhereIn($column_name, $value_array);
+                }
+                foreach ($columns_change_search as $search_column_name => $change_key_array) {
+                    foreach ($change_key_array as $inside_value => $outer_value) {
+                        if (strpos($outer_value, $query_string) !== false) {
+                            $query_all_column->orWhere($search_column_name, 'like', '%' . $inside_value . '%');
                         }
                     }
                 }
-            );
-        }
+            }
+        );
         return $this;
     }
-    public function getTable(array $parameter)
+
+    /**
+     * get data with table format
+     *
+     * @param array $table_config config of table
+     * orderBy: "column name",
+     * ascending: ["ASC","DESC"],
+     * page: int => pagination,
+     * limit: int => count of each pagination and this time take,
+     * select: array => column need to select,
+     * with: array => search relation,
+     * with_count: array => count relation
+     * @return array
+     */
+    public function getTable(array $table_config)
     {
         $count = $this->model->count();
-        if (isset($parameter['orderBy']) && isset($parameter['ascending'])) {
-            $orderBy = $parameter['orderBy'];
-            $ascending = $parameter['ascending'];
+        if (isset($table_config['orderBy']) && isset($table_config['ascending'])) {
+            $orderBy = $table_config['orderBy'];
+            $ascending = $table_config['ascending'];
             $this->model = $this->model->orderBy($orderBy, $ascending == 1 ? "ASC" : "DESC");
         } else {
             $this->model = $this->model->orderBy('created_at', "DESC");
         }
-        if (isset($parameter['page']) && isset($parameter['limit'])) {
-            $page = $parameter['page'];
-            $limit = $parameter['limit'];
+        if (isset($table_config['page']) && isset($table_config['limit'])) {
+            $page = $table_config['page'];
+            $limit = $table_config['limit'];
             $this->model = $this->model->skip(($page - 1) * $limit);
         }
-        if (isset($parameter['limit'])) {
-            $limit = $parameter['limit'];
+        if (isset($table_config['limit'])) {
+            $limit = $table_config['limit'];
             $this->model = $this->model->take($limit);
         }
-        if (isset($parameter['select'])) {
-            $this->model = $this->model->select($parameter['select']);
+        if (isset($table_config['select'])) {
+            $this->model = $this->model->select($table_config['select']);
         }
-        if (isset($parameter["with"])) {
-            $this->model =  $this->model->with($parameter['with']);
+        if (isset($table_config["with"])) {
+            $this->model = $this->model->with($table_config['with']);
         }
-        if (isset($parameter["with_count"])) {
-            $this->model = $this->model->withCount($parameter['with_count']);
+        if (isset($table_config["with_count"])) {
+            $this->model = $this->model->withCount($table_config['with_count']);
         }
         $data = $this->model->get();
         return ['count' => $count, 'data' => $data];
