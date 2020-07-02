@@ -58,16 +58,6 @@ abstract class CommonRepository
     }
 
     /**
-     * return current model
-     *
-     * @return \Illuminate\Database\Eloquent\Model
-     */
-    public function getModel(): Model
-    {
-        return $this->model;
-    }
-
-    /**
      * set model
      *
      * @param Model $model model
@@ -78,17 +68,6 @@ abstract class CommonRepository
         $this->model = $model;
         $this->init();
         return $this;
-    }
-
-    /**
-     * run function by string
-     *
-     * @param string $function_name function name
-     * @return mixed
-     */
-    public function modelRunFunction(string $function_name)
-    {
-        return $this->model->$function_name();
     }
 
     /**
