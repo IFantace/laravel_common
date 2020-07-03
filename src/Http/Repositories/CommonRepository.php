@@ -4,6 +4,7 @@ namespace Ifantace\Common\Http\Repositories;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Schema;
+use Throwable;
 
 abstract class CommonRepository
 {
@@ -35,14 +36,14 @@ abstract class CommonRepository
      */
     protected $columns;
 
-    /**
-     * construct
-     *
-     * @param Model $model model
-     */
     public function __construct(Model $model)
     {
         $this->setModel($model);
+    }
+
+    public function __call($fun, $args)
+    {
+        return call_user_func_array(array($this->model, $fun), $args);
     }
 
     /**
