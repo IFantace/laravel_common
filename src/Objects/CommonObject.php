@@ -4,7 +4,7 @@
  * @Author: Austin
  * @Date: 2019-12-27 17:49:13
  * @LastEditors  : Austin
- * @LastEditTime : 2020-07-02 18:14:38
+ * @LastEditTime : 2020-07-03 17:56:19
  */
 
 namespace Ifantace\Common\Objects;
@@ -45,6 +45,8 @@ abstract class CommonObject
         $this->setCreator();
         if ($primary_key !== null) {
             $this->setDataByPrimary($primary_key);
+        } else {
+            $this->initSystemData();
         }
     }
 
@@ -62,15 +64,16 @@ abstract class CommonObject
      * search and set this object by primary key.
      *
      * @param string $primary_key
-     * @return void
+     * @return bool
      */
     public function setDataByPrimary(string $primary_key)
     {
         $data = $this->findDataByPrimary($primary_key);
         if ($data !== null) {
             $this->setData($data, $this->all_column);
-            $this->initSystemData();
+            return true;
         }
+        return false;
     }
 
     /**
