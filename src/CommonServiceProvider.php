@@ -4,7 +4,7 @@
  * @Author: Austin
  * @Date: 2020-01-09 18:18:25
  * @LastEditors  : Austin
- * @LastEditTime : 2020-02-05 20:06:43
+ * @LastEditTime : 2020-07-14 15:34:33
  */
 
 namespace Ifantace\Common;
@@ -35,13 +35,18 @@ class CommonServiceProvider extends ServiceProvider
     {
         $this->registerPublishables();
     }
+    /**
+     * publish data
+     *
+     * @return void
+     */
     private function registerPublishables()
     {
-        $basePath = __DIR__;
+        $basePath = __DIR__;2
         $arrPublishable = [
-            'migrations' => [
-                "$basePath/publishable/databases/migrations" => database_path('migrations'),
-            ],
+            // 'migrations' => [
+            //     "$basePath/publishable/databases/migrations" => database_path('migrations'),
+            // ],
             'config' => [
                 "$basePath/publishable/config" => config_path(),
             ],

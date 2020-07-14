@@ -3,8 +3,8 @@
 /*
  * @Author: Austin
  * @Date: 2020-01-09 18:18:25
- * @LastEditors: Austin
- * @LastEditTime: 2020-02-05 20:07:41
+ * @LastEditors  : Austin
+ * @LastEditTime : 2020-07-13 16:41:02
  */
 return [
     "events" => [
@@ -19,9 +19,9 @@ return [
         "create" => "建立",
         "delete" => "刪除",
         "update" => "更新",
-        'success' => '成功',
-        'operation' => '操作',
-        'completed' => '完成',
-        'failed' => '失敗',
+        "success" => "成功",
+        "failed" => "失敗",
+        "operation" => "操作",
+        "completed" => "完成",
     ],
 ];

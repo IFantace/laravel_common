@@ -116,7 +116,7 @@ abstract class CommonRepository
      *
      * @param array $table_config config of table
      * orderBy: "column name",
-     * ascending: ["ASC","DESC"],
+     * ascending: int => 1:ASC, 2:DESC,
      * page: int => pagination,
      * limit: int => count of each pagination and this time take,
      * select: array => column need to select,

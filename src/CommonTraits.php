@@ -6,8 +6,6 @@ use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Log;
-use Ifantace\Common\Objects\ResponseException;
 use Throwable;
 
 trait CommonTraits
@@ -34,7 +32,7 @@ trait CommonTraits
      * Load json file in config/JSON folder.
      *
      * @param Request|string $file_name String of file name or a request with file_name column.
-     * @return array|mixed
+     * @return mixed
      */
     public function loadConfigJson($file_name)
     {
@@ -51,7 +49,7 @@ trait CommonTraits
      *
      * @param Request $input Request.
      * @param array $column_array Array of required column_name.
-     * @return boolean
+     * @return bool
      */
     public function checkParameter(Request $input, array $column_array)
     {
@@ -66,8 +64,8 @@ trait CommonTraits
     /**
      * Generate random string with number or character.
      *
-     * @param integer $length Length of string.
-     * @param integer $mode 0 ~ 7, binary 0 bit: with number, 1 bit: with upper case, 2 bit: with lower case.
+     * @param int $length Length of string.
+     * @param int $mode 0 ~ 7, binary 0 bit: with number, 1 bit: with upper case, 2 bit: with lower case.
      * @return string|false
      */
     public function generateRandomKey(int $length, int $mode = 7)
@@ -104,6 +102,14 @@ trait CommonTraits
         return json_encode($array, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
     }
 
+    /**
+     * return custom log strnig
+     *
+     * @param string $event
+     * @param array $data
+     * @param string $event_uuid
+     * @return string
+     */
     public function createLogString(string $event, array $data, string $event_uuid)
     {
         return $this->jsonEncodeUnescaped([
@@ -146,7 +152,7 @@ trait CommonTraits
      *
      * @param string $date Date with time.
      * @param string $format Format.
-     * @return boolean
+     * @return bool
      */
     public function validateDate(string $date, string $format = 'Y-m-d H:i:s')
     {
@@ -167,5 +173,20 @@ trait CommonTraits
         } else {
             return null;
         }
+    }
+
+    /**
+     * return whereRaw content, which equal whereIn
+     *
+     * @param string $column_name column name
+     * @param array $data_array where in array
+     * @return string
+     */
+    public function createWhereInRaw(string $column_name, array $data_array)
+    {
+        if (count($data_array) == 0) {
+            return "1 = 0";
+        }
+        return $column_name . " In (\"" . join("\",\"", $data_array) . "\")";
     }
 }
