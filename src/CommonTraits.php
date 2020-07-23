@@ -19,7 +19,8 @@ trait CommonTraits
                     return response()->download(storage_path('logs') . "/" . $input->get("path"), null, $headers);
                 }
             }
-        } catch (\Exception $error) { }
+        } catch (\Exception $error) {
+        }
         return "error";
     }
     public function loadConfigJson($file_name)
@@ -31,7 +32,8 @@ trait CommonTraits
             return json_decode(file_get_contents(config_path('JSON/' . $file_name . '.json')), true);
         } catch (\Exception $error) {
             return [];
-        } finally { }
+        } finally {
+        }
     }
     public function checkPostParameter(Request $input, $column_array)
     {
@@ -59,6 +61,23 @@ trait CommonTraits
         }
         return $randoma;
     }
+    public function generateRandomKey($length)
+    {
+        $randoma = "";
+        $random = $length;
+        for ($j = 0; $j < $random; $j++) {
+            switch (mt_rand(0, 1)) {
+                case 0:
+                    $in = chr(mt_rand(65, 90));
+                    break;
+                case 1:
+                    $in = mt_rand(0, 9);
+                    break;
+            }
+            $randoma = $randoma . $in;
+        }
+        return $randoma;
+    }
     public function sendCurlPostJSON($url, $data, $header = [])
     {
         $event_uuid = $this->gen_uuid();
@@ -66,8 +85,6 @@ trait CommonTraits
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 0);
         curl_setopt($ch, CURLOPT_TIMEOUT, 60);
         curl_setopt($ch, CURLOPT_POSTFIELDS, is_array($data)
@@ -98,7 +115,8 @@ trait CommonTraits
                 if ($try_decode_data != null) {
                     return $try_decode_data;
                 }
-            } catch (\Exception $error) { }
+            } catch (\Exception $error) {
+            }
             return $output;
         } else {
             $error = curl_error($ch);
@@ -132,7 +150,48 @@ trait CommonTraits
             mt_rand(0, 0xffff)
         );
     }
+    public function genUuid()
+    {
+        return sprintf(
+            '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
+            // 32 bits for  "time_lo w"
+            mt_rand(0, 0xffff),
+            mt_rand(0, 0xffff),
+
+            // 16 bits for  "time_mi d"
+            mt_rand(0, 0xffff),
+
+            // 16 bits for  "time_hi_and_versio n",
+            // four most significant bits holds version number 4
+            mt_rand(0, 0x0fff) | 0x4000,
+
+            // 16 bits, 8 bits for  "clk_seq_hi_re s",
+            // 8 bits for  "clk_seq_lo w",
+            // two most significant bits holds zero and one for variant DCE1.1
+            mt_rand(0, 0x3fff) | 0x8000,
+
+            // 48 bits for  "nod e"
+            mt_rand(0, 0xffff),
+            mt_rand(0, 0xffff),
+            mt_rand(0, 0xffff)
+        );
+    }
     public function generate_responseArray($status, $message, $UI_message, $data = null)
+    {
+        $responseArray = array();
+        $responseArray["status"] = $status;
+        $responseArray["message"] = $message;
+        $responseArray["ui_message"] = $UI_message;
+        $responseArray["uuid"] = $this->gen_uuid();
+        if (is_array($data)) {
+            foreach ($data as $key => $value) {
+                $responseArray[$key] = $value;
+            }
+        }
+        ksort($responseArray);
+        return $responseArray;
+    }
+    public function generateResponseArray($status, $message, $UI_message, $data = null)
     {
         $responseArray = array();
         $responseArray["status"] = $status;
@@ -179,7 +238,8 @@ trait CommonTraits
                 $parameter = $input->all();
             }
             $user = $this->getCurrentUser();
-        } catch (Exception $error) { }
+        } catch (Exception $error) {
+        }
         $str_input = "REQUEST: " . json_encode(
             array("method" => $method,  "File" => $file_name, "Page" => $API_name, "Parameter" => $parameter, "user" => $user),
             JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE
