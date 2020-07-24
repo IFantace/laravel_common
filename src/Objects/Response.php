@@ -4,7 +4,7 @@
  * @Author       : Austin
  * @Date         : 2020-03-25 17:09:18
  * @LastEditors  : Austin
- * @LastEditTime : 2020-07-02 18:21:46
+ * @LastEditTime : 2020-07-23 14:50:47
  * @Description  : {{Description this}}
  */
 
@@ -302,7 +302,7 @@ class Response
             $this->createLogString(
                 "Request-Response",
                 $response_array,
-                $this->event_uuid,
+                $this->event_uuid
             )
         );
     }
