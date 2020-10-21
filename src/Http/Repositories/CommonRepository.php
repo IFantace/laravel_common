@@ -2,12 +2,15 @@
 
 namespace Ifantace\Common\Http\Repositories;
 
+use Ifantace\Common\CommonTraits;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Schema;
 use Throwable;
 
 abstract class CommonRepository
 {
+    use CommonTraits;
+
     /**
      * this repository model
      *
@@ -97,7 +100,7 @@ abstract class CommonRepository
                     $query_all_column->orWhere($each_column, 'like', '%' . $query_string . '%');
                 }
                 foreach ($columns_whereIn as $column_name => $value_array) {
-                    $query_all_column->orWhereIn($column_name, $value_array);
+                    $query_all_column->orWhereRaw($this->createWhereInRaw($column_name, $value_array));
                 }
                 foreach ($columns_change_search as $search_column_name => $change_key_array) {
                     foreach ($change_key_array as $inside_value => $outer_value) {
