@@ -77,7 +77,7 @@ trait CommonTraits
         curl_setopt($ch, CURLOPT_HTTPHEADER, array_merge($header, array('Content-Type: application/json')));
         Log::getMonolog()->popHandler();
         Log::useDailyFiles(storage_path() . "/logs/curl.log");
-        Log::info("SEND: " . json_encode(array("url" => $url, "body" => $data, "header" => array_merge($header, array('Content-Type: application/json')), "event_uuid" => $event_uuid),  JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
+        Log::info("SEND: " . json_encode(array("url" => $url, "body" => $data, "header" => array_merge($header, array('Content-Type: application/json')), "event_uuid" => $event_uuid), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
         $output = curl_exec($ch);
         $status_code = curl_errno($ch); //get status code
         Log::info("RESPONSE: " . json_encode(array("status_code" => $status_code, "response_body" => $status_code == 0 ? $output : null, "event_uuid" => $event_uuid), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
@@ -106,19 +106,15 @@ trait CommonTraits
             // 32 bits for  "time_lo w"
             mt_rand(0, 0xffff),
             mt_rand(0, 0xffff),
-
             // 16 bits for  "time_mi d"
             mt_rand(0, 0xffff),
-
             // 16 bits for  "time_hi_and_versio n",
             // four most significant bits holds version number 4
             mt_rand(0, 0x0fff) | 0x4000,
-
             // 16 bits, 8 bits for  "clk_seq_hi_re s",
             // 8 bits for  "clk_seq_lo w",
             // two most significant bits holds zero and one for variant DCE1.1
             mt_rand(0, 0x3fff) | 0x8000,
-
             // 48 bits for  "nod e"
             mt_rand(0, 0xffff),
             mt_rand(0, 0xffff),

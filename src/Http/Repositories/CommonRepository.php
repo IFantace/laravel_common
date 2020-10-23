@@ -7,9 +7,13 @@ use Illuminate\Support\Facades\Schema;
 class CommonRepository
 {
     protected $model;
+    protected $connection_name;
+    protected $table_name;
     public function __construct($model)
     {
         $this->model = $model;
+        $this->connection_name = $this->model->getConnectionName();
+        $this->table_name = $this->model->getTable();
     }
     public function first()
     {
@@ -51,8 +55,8 @@ class CommonRepository
     ) {
         if (isset($parameter['query'])) {
             $query_string = $parameter['query'];
-            $columns = Schema::connection($this->model->getConnectionName())
-                ->getColumnListing($this->model->getTable());
+            $columns = Schema::connection($this->connection_name)
+                ->getColumnListing($this->table_name);
             $columns_not_search = array_merge($columns_not_search, array_keys($columns_change_search));
             $columns = array_values(array_diff($columns, $columns_not_search));
             if (preg_match('/[^A-Za-z0-9: ]/', $query_string)) {
