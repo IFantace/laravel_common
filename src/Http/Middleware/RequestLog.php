@@ -1,9 +1,10 @@
 <?php
+
 /*
  * @Author: Austin
  * @Date: 2019-08-01 17:26:23
  * @LastEditors  : Austin
- * @LastEditTime : 2020-10-21 17:55:26
+ * @LastEditTime : 2020-10-23 16:31:09
  */
 
 namespace Ifantace\Common\Http\Middleware;
