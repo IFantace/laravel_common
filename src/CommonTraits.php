@@ -78,7 +78,7 @@ trait CommonTraits
         }
         return $randoma;
     }
-    public function sendCurlPostJSON($url, $data, $header = [])
+    public function sendCurlPost($url, $data, $header = [])
     {
         $event_uuid = $this->gen_uuid();
         $ch = curl_init();
@@ -92,12 +92,12 @@ trait CommonTraits
                 $data,
                 JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE
             ) : $data);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array_merge($header, array('Content-Type: application/json')));
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
         $monolog = Log::getMonolog();
         $monolog->popHandler();
         Log::useDailyFiles(storage_path() . "/logs/curl.log");
         Log::info("SEND: " . json_encode(
-            array("url" => $url, "body" => $data, "header" => array_merge($header, array('Content-Type: application/json')), "event_uuid" => $event_uuid),
+            array("url" => $url, "body" => $data, "header" => $header, "event_uuid" => $event_uuid),
             JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE
         ));
         $output = curl_exec($ch);
@@ -123,6 +123,11 @@ trait CommonTraits
             curl_close($ch);
             return $error;
         }
+    }
+    public function sendCurlPostJSON($url, $data, $header = [])
+    {
+        $header = array_merge($header, array('Content-Type: application/json'));
+        return $this->sendCurlPost($url, $data, $header);
     }
     public function gen_uuid()
     {
