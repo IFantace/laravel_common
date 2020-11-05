@@ -87,11 +87,7 @@ trait CommonTraits
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 0);
         curl_setopt($ch, CURLOPT_TIMEOUT, 60);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, is_array($data)
-            ? json_encode(
-                $data,
-                JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE
-            ) : $data);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
         $monolog = Log::getMonolog();
         $monolog->popHandler();
@@ -127,6 +123,8 @@ trait CommonTraits
     public function sendCurlPostJSON($url, $data, $header = [])
     {
         $header = array_merge($header, array('Content-Type: application/json'));
+        $data = is_array($data) ? json_encode($data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)
+            : $data;
         return $this->sendCurlPost($url, $data, $header);
     }
     public function gen_uuid()
